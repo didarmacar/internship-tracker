@@ -1,0 +1,839 @@
+﻿@using StajyerTakipSistemi.Models.ViewModels
+@model List<BasvuruDegerlendirmeViewModel>
+@{
+    ViewData["Title"] = "Başvuru Değerlendirme";
+    Layout = null;
+}
+
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 15px rgba(22, 160, 133, 0.4);
+    }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .logout-btn {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .container-fluid {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .sidebar {
+        width: 250px;
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+            .sidebar li:last-child {
+                border-bottom: none;
+            }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+            .sidebar a:hover {
+                color: #16a085;
+                background: rgba(22, 160, 133, 0.08);
+            }
+
+        .sidebar .active {
+            color: #16a085 !important;
+            font-weight: 600;
+            background: rgba(22, 160, 133, 0.12);
+            border-left: 3px solid #16a085;
+        }
+
+    .main-content {
+        flex: 1;
+    }
+
+    .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(22, 160, 133, 0.12);
+        border-left: 5px solid #16a085;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        color: #333;
+        margin: 0 0 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .page-subtitle {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .filters-section {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 0.5rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+
+            .filter-group select:focus, .filter-group input:focus {
+                outline: none;
+                border-color: #16a085;
+            }
+
+    .applications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .application-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+        .application-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(22, 160, 133, 0.2);
+            border-color: #16a085;
+        }
+
+    .applicant-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .applicant-photo {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .applicant-info h3 {
+        margin: 0 0 0.3rem 0;
+        color: #333;
+        font-size: 1.2rem;
+    }
+
+    .applicant-meta {
+        color: #666;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .time-badge {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+
+    .application-details {
+        margin-bottom: 1rem;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+    .detail-label {
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .detail-value {
+        color: #333;
+        font-size: 0.9rem;
+        text-align: right;
+    }
+
+    .internship-type {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .type-zorunlu {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .type-gonullu {
+        background: #e8f5e8;
+        color: #2e7d32;
+    }
+
+    .application-note {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        border-left: 4px solid #16a085;
+    }
+
+    .note-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .note-text {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .documents-section {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .doc-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        background: #f0f9ff;
+        color: #0369a1;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .doc-link:hover {
+            background: #e0f2fe;
+            color: #0284c7;
+            text-decoration: none;
+        }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.8rem;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        padding: 0.8rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-approve {
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: white;
+    }
+
+        .btn-approve:hover {
+            background: linear-gradient(135deg, #138d75, #17a2b8);
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-reject {
+        background: #dc3545;
+        color: white;
+    }
+
+        .btn-reject:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-detail {
+        background: #6c757d;
+        color: white;
+    }
+
+        .btn-detail:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        min-width: 400px;
+        max-width: 500px;
+    }
+
+    .modal-header {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modal-title {
+        margin: 0;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+            .form-group textarea:focus {
+                outline: none;
+                border-color: #16a085;
+            }
+
+    .modal-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 1.5rem;
+    }
+
+    @@media (max-width: 768px) {
+        .container-fluid
+
+    {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .applications-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    }
+</style>
+
+<div class="header">
+    <h1>🏢 TechCorp Eğitmen Paneli</h1>
+    <div class="user-info">
+        <div class="user-avatar">EH</div>
+        <span>@(ViewBag.UserName ?? "Eğitmen") - Eğitmen</span>
+        <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="@Url.Action("Index", "Egitmen")"><span>🏠</span> Ana Sayfa</a></li>
+            <li><a href="@Url.Action("StajyerListesi", "Egitmen")"><span>👥</span> Stajyer Listesi</a></li>
+            <li><a href="@Url.Action("BasvuruDegerlendirme", "Egitmen")" class="active"><span>📋</span> Başvuru Değerlendirme</a></li>
+            <li><a href="@Url.Action("OdevAtama", "Egitmen")"><span>📝</span> Ödev Atama</a></li>
+            <li><a href="#"><span>⚙️</span> Ayarlar</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h2 class="page-title">📋 Başvuru Değerlendirme</h2>
+            <p class="page-subtitle">Bekleyen başvuruları incele, onay veya red kararı ver</p>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Success"]
+            </div>
+        }
+
+        <!-- İstatistikler -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count</div>
+                <div class="stat-label">Bekleyen Başvuru</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count(b => b.StajTuru == "Zorunlu Staj")</div>
+                <div class="stat-label">Zorunlu Staj</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count(b => b.StajTuru == "Gönüllü Staj")</div>
+                <div class="stat-label">Gönüllü Staj</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">
+                    @{
+                        var bugünBasvuranlar = Model.Where(b => b.BasvuruTarihi.Date == DateTime.Today).Count();
+                    }
+@bugünBasvuranlar
+                </div>
+                <div class="stat-label">Bugün Başvuran</div>
+            </div>
+        </div>
+
+        <!-- Filtreler -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>Staj Türü</label>
+                    <select id="stajTuruFilter">
+                        <option value="">Tümü</option>
+                        <option value="Zorunlu">Zorunlu Staj</option>
+                        <option value="Gönüllü">Gönüllü Staj</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Okul</label>
+                    <select id="okulFilter">
+                        <option value="">Tümü</option>
+                        @foreach (var okul in Model.Select(m => m.OkulAdi).Distinct())
+                        {
+                            <option value="@okul">@okul</option>
+                        }
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Başvuru Tarihi</label>
+                    <select id="tarihFilter">
+                        <option value="">Tümü</option>
+                        <option value="bugün">Bugün</option>
+                        <option value="dün">Dün</option>
+                        <option value="bu_hafta">Bu Hafta</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Arama</label>
+                    <input type="text" id="aramaFilter" placeholder="Ad, soyad veya email ara...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Başvuru Kartları -->
+        @if (Model.Any())
+        {
+            <div class="applications-grid">
+                @foreach (var basvuru in Model)
+                {
+                    <div class="application-card" data-staj-turu="@basvuru.StajTuru" data-okul="@basvuru.OkulAdi" data-tarih="@basvuru.BasvuruTarihi.ToString("yyyy-MM-dd")" data-arama="@basvuru.AdSoyad @basvuru.Email">
+                        <div class="applicant-header">
+                            <div class="applicant-photo">
+                                @(basvuru.AdSoyad.Split(' ')[0].Substring(0, 1))@(basvuru.AdSoyad.Split(' ').Length > 1 ? basvuru.AdSoyad.Split(' ')[1].Substring(0, 1) : "")
+                            </div>
+                            <div class="applicant-info">
+                                <h3>@basvuru.AdSoyad</h3>
+                                <div class="applicant-meta">
+                                    <span>📧 @basvuru.Email</span>
+                                    <span class="time-badge">
+                                        @{
+                                            var gecenSure = DateTime.Now - basvuru.BasvuruTarihi;
+                                            var zaman = gecenSure.Days > 0 ? $"{gecenSure.Days} gün önce" :
+                                            gecenSure.Hours > 0 ? $"{gecenSure.Hours} saat önce" :
+                                            "Az önce";
+                                        }
+        @zaman
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="application-details">
+                            <div class="detail-row">
+                                <span class="detail-label">📱 Telefon:</span>
+                                <span class="detail-value">@basvuru.Telefon</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">🎓 Okul:</span>
+                                <span class="detail-value">@basvuru.OkulAdi</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">📚 Bölüm:</span>
+                                <span class="detail-value">@basvuru.Bolum</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">🎯 Sınıf:</span>
+                                <span class="detail-value">@basvuru.Sinif. Sınıf</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">📋 Staj Türü:</span>
+                                <span class="detail-value">
+                                    <span class="internship-type type-@(basvuru.StajTuru == "Zorunlu Staj" ? "zorunlu" : "gonullu")">
+                                        @basvuru.StajTuru
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">📅 Staj Dönemi:</span>
+                                <span class="detail-value">
+                                    @basvuru.StajBaslangicTarihi.ToString("dd/MM/yyyy") - @basvuru.StajBitisTarihi.ToString("dd/MM/yyyy")
+                                </span>
+                            </div>
+                        </div>
+
+                  
+
+ 
+
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-approve" onclick="document.getElementById('form-@basvuru.Id').submit();">✅ Onayla</button>
+                            <button class="btn btn-reject" onclick="openRejectModal(@basvuru.Id, '@basvuru.AdSoyad')">❌ Reddet</button>
+                            <a href="@Url.Action("BasvuruDetay", "Egitmen", new { id = basvuru.Id })" class="btn btn-detail">👁️ Detay</a>
+                        </div>
+                        <form id="form-@basvuru.Id" method="post" asp-action="BasvuruOnayla" style="display: none;">
+                            <input type="hidden" name="userId" value="@basvuru.Id" />
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <h3>Bekleyen başvuru bulunmuyor</h3>
+                <p>Şu anda değerlendirme bekleyen bir başvuru yok.</p>
+            </div>
+        }
+    </main>
+</div>
+
+<!-- Red Nedeni Modal -->
+<div id="rejectModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Başvuruyu Reddet</h3>
+        </div>
+        <form method="post" asp-action="BasvuruReddet">
+            <input type="hidden" id="rejectUserId" name="userId" />
+            <div class="form-group">
+                <label>Red Nedeni:</label>
+                <textarea name="redNedeni" placeholder="Başvurunun reddedilme nedenini açıklayın..." required></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-detail" onclick="closeRejectModal()">İptal</button>
+                <button type="submit" class="btn btn-reject">Reddet</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Filtreleme
+    document.getElementById('stajTuruFilter').addEventListener('change', filterApplications);
+    document.getElementById('okulFilter').addEventListener('change', filterApplications);
+    document.getElementById('tarihFilter').addEventListener('change', filterApplications);
+    document.getElementById('aramaFilter').addEventListener('input', filterApplications);
+
+    function filterApplications() {
+        const stajTuru = document.getElementById('stajTuruFilter').value;
+        const okul = document.getElementById('okulFilter').value;
+        const tarih = document.getElementById('tarihFilter').value;
+        const arama = document.getElementById('aramaFilter').value.toLowerCase();
+
+        const cards = document.querySelectorAll('.application-card');
+
+        cards.forEach(card => {
+            let show = true;
+
+            // Staj türü filtresi
+            if (stajTuru && !card.dataset.stajTuru.includes(stajTuru)) {
+                show = false;
+            }
+
+            // Okul filtresi
+            if (okul && card.dataset.okul !== okul) {
+                show = false;
+            }
+
+            // Tarih filtresi
+            if (tarih) {
+                const cardDate = new Date(card.dataset.tarih);
+                const today = new Date();
+
+                if (tarih === 'bugün' && cardDate.toDateString() !== today.toDateString()) {
+                    show = false;
+                } else if (tarih === 'dün') {
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    if (cardDate.toDateString() !== yesterday.toDateString()) {
+                        show = false;
+                    }
+                } else if (tarih === 'bu_hafta') {
+                    const weekAgo = new Date(today);
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    if (cardDate < weekAgo) {
+                        show = false;
+                    }
+                }
+            }
+
+            // Arama filtresi
+            if (arama && !card.dataset.arama.toLowerCase().includes(arama)) {
+                show = false;
+            }
+
+            card.style.display = show ? 'block' : 'none';
+        });
+    }
+
+    // Modal işlemleri
+    function openRejectModal(userId, adSoyad) {
+        document.getElementById('rejectUserId').value = userId;
+        document.querySelector('.modal-title').textContent = `${adSoyad} - Başvuruyu Reddet`;
+        document.getElementById('rejectModal').style.display = 'block';
+    }
+
+    function closeRejectModal() {
+        document.getElementById('rejectModal').style.display = 'none';
+    }
+
+    // Modal dışına tıklayınca kapat
+    window.onclick = function(event) {
+        const modal = document.getElementById('rejectModal');
+        if (event.target === modal) {
+            closeRejectModal();
+        }
+    }
+</script>

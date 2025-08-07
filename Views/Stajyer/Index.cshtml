@@ -1,0 +1,516 @@
+﻿@using StajyerTakipSistemi.Controllers
+@model StajyerDashboardViewModel
+
+@{
+    ViewData["Title"] = "Stajyer Ana Sayfa";
+    Layout = null;
+}
+
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .logout-btn {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .container-fluid {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .sidebar {
+        width: 250px;
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+            .sidebar li:last-child {
+                border-bottom: none;
+            }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+            .sidebar a:hover {
+                color: #667eea;
+            }
+
+        .sidebar .active {
+            color: #667eea !important;
+            font-weight: 600;
+        }
+
+    .main-content {
+        flex: 1;
+    }
+
+    .welcome-section {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .welcome-title {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-subtitle {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        min-height: 250px; /* Bu satırı ekle */
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+
+    .card-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .badge-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .task-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .task-item {
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+    .task-name {
+        color: #333;
+        font-weight: 500;
+    }
+
+    .task-status {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+
+    .status-bekliyor {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-tamamlandı {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-gecikmiş {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .schedule-item {
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+    .schedule-time {
+        font-weight: 600;
+        color: #667eea;
+        font-size: 0.9rem;
+    }
+
+    .schedule-title {
+        color: #333;
+        margin: 0.2rem 0;
+    }
+
+    .progress-container {
+        margin: 1rem 0;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .activity-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .activity-progress {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-title {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 0.2rem;
+    }
+
+    .activity-description {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    @@media (max-width: 768px) {
+        .container-fluid
+
+    {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    }
+</style>
+
+<div class="header">
+    <h1>📋 Stajyer Takip Uygulaması</h1>
+    <div class="user-info">
+        <div class="user-avatar">@Model.KullaniciInitials</div>
+        <span>@Model.KullaniciAdi - Stajyer</span>
+        <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="@Url.Action("Index", "Stajyer")" class="active"><span>🏠</span> Ana Sayfa</a></li>
+            <li><a href="@Url.Action("Basvuru", "Stajyer")"><span>📄</span> Başvuru</a></li>
+            <li><a href="@Url.Action("Odevlerim", "Stajyer")"><span>📚</span> Ödevlerim</a></li>
+            <li><a href="@Url.Action("Takvim", "Stajyer")"><span>📅</span> Takvim</a></li>
+            <li><a href="@Url.Action("Mesajlar", "Stajyer")"><span>💬</span> Mesajlar</a></li>
+            <li><a href="#" id="kahveKutusuLink"><span>☕</span> Kahve Kutusu</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="font-size: 3rem;">🦔</div>
+                <div>
+                    <h2 class="welcome-title">Hoş geldin, @Model.KullaniciAdi.Split(' ')[0]!</h2>
+                    <p class="welcome-subtitle">Bugün @Model.BekleyenOdevler.Count yeni görevin var ve @Model.BugunEgitimleri.Count eğitimin bulunuyor. Hadi başlayalım! ⚡</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">👨‍💻 Bekleyen Ödevler</h3>
+                    <span class="card-badge badge-pending">@Model.BekleyenOdevler.Count Bekliyor</span>
+                </div>
+                <ul class="task-list">
+                    @if (Model.BekleyenOdevler.Any())
+                    {
+                        @foreach (var odev in Model.BekleyenOdevler)
+                        {
+                            <li class="task-item">
+                                <span class="task-name">@odev.GorevAdi</span>
+                                <span class="task-status status-@odev.Durum.ToLower()">@odev.Durum</span>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="task-item">
+                            <span class="task-name">Henüz ödev bulunmuyor</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📚 Bugünün Eğitimleri</h3>
+                </div>
+                @foreach (var egitim in Model.BugunEgitimleri)
+                {
+                    <div class="schedule-item">
+                        <div class="schedule-time">@egitim.Saat</div>
+                        <div class="schedule-title">@egitim.Baslik</div>
+                    </div>
+                }
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📈 İlerleme Durumun</h3>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Genel İlerleme</span>
+                        <span>@Model.GenelIlerleme%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: @Model.GenelIlerleme%"></div>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Bu Hafta</span>
+                        <span>@Model.BuHaftaIlerleme%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: @Model.BuHaftaIlerleme%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🎯 Son Aktiviteler</h3>
+                </div>
+                @foreach (var aktivite in Model.SonAktiviteler)
+                {
+                    <div class="activity-item">
+                        <div class="activity-icon @aktivite.IconClass">@aktivite.Icon</div>
+                        <div class="activity-content">
+                            <div class="activity-title">@aktivite.Baslik</div>
+                            <div class="activity-description">@aktivite.Aciklama</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Kahve Kutusu Widget -->
+        <div id="kahveWidget" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 2px solid #ddd; border-radius: 10px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 1000; min-width: 300px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h4 style="margin: 0; color: #8B4513;">☕ Kahve Kutusu</h4>
+                <button id="closeKahve" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">❌</button>
+            </div>
+
+            <div style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                <div style="margin-bottom: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px;">
+                        <span>Mehmet Kaya</span>
+                        <span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 50%; font-size: 0.8rem;">3</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px;">
+                        <span>Ayşe Demir</span>
+                        <span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 50%; font-size: 0.8rem;">2</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                        <span>Ali Yılmaz</span>
+                        <span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 50%; font-size: 0.8rem;">2</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: right;">
+                <button id="bilgisayarAcikBtn" style="background: #8B4513; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                    Bilgisayar Açık Unutuldu!
+                </button>
+            </div>
+        </div>
+
+        <!-- Popup Modal -->
+        <div id="kahvePopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 10px; text-align: center; min-width: 300px;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">☕</div>
+                <h3 style="color: #dc3545; margin-bottom: 1rem;">YAKALANDIN</h3>
+                <p style="margin-bottom: 1.5rem;">Ekip sizden kahve bekliyor.</p>
+                <button id="popupTamamBtn" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600; cursor: pointer;">
+                    TAMAM
+                </button>
+            </div>
+        </div>
+
+        <script>
+            // Kahve kutusu linkine tıklandığında widget'ı aç
+            document.getElementById('kahveKutusuLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('kahveWidget').style.display = 'block';
+            });
+
+            // Widget'ı kapat
+            document.getElementById('closeKahve').addEventListener('click', function() {
+                document.getElementById('kahveWidget').style.display = 'none';
+            });
+
+            // Bilgisayar açık unutuldu butonuna tıklandığında popup'ı aç
+            document.getElementById('bilgisayarAcikBtn').addEventListener('click', function() {
+                document.getElementById('kahveWidget').style.display = 'none';
+                document.getElementById('kahvePopup').style.display = 'block';
+            });
+
+            // Popup tamam butonuna tıklandığında popup'ı kapat
+            document.getElementById('popupTamamBtn').addEventListener('click', function() {
+                document.getElementById('kahvePopup').style.display = 'none';
+            });
+        </script>

@@ -1,0 +1,117 @@
+﻿@if (TempData["Debug"] != null)
+{
+    <div style="background: yellow; padding: 10px; margin: 10px;">
+        DEBUG: @TempData["Debug"]
+    </div>
+}
+@model StajyerTakipSistemi.Models.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Giriş";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stajyer Takip Sistemi - Giriş</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+            .btn-login:hover {
+                background-color: #218838;
+            }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .user-type-selection {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 class="login-title">Stajyer Takip Sistemi</h2>
+        <h4 class="text-center mb-4">Giriş</h4>
+
+        @if (ViewData.ModelState.ErrorCount > 0)
+        {
+            <div class="alert alert-danger">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@error.ErrorMessage</div>
+                }
+            </div>
+        }
+        <form asp-action="Login" method="post">
+            <div class="user-type-selection">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="UserType" value="0" id="egitmen" />
+                    <label class="form-check-label" for="egitmen">Eğitmen</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="UserType" value="1" id="stajyer" />
+                    <label class="form-check-label" for="stajyer">Stajyer</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email">Kullanıcı Adı</label>
+                <input asp-for="Email" class="form-control" placeholder="E-posta adresinizi giriniz" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Sifre">Şifre</label>
+                <input asp-for="Sifre" type="password" class="form-control" placeholder="Şifrenizi giriniz" />
+                <span asp-validation-for="Sifre" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-login">GİRİŞ</button>
+        </form>
+        <div class="register-link">
+            <a href="@Url.Action("Register", "Auth")" class="text-decoration-none">kayıt olun</a>
+        </div>
+    </div>
+</body>
+</html>

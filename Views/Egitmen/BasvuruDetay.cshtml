@@ -1,0 +1,485 @@
+﻿@using StajyerTakipSistemi.Models.ViewModels
+@model BasvuruDegerlendirmeViewModel
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Başvuru Detay - Zeynep Acar</title>
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(22, 160, 133, 0.4);
+        }
+
+            .header h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #16a085;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+        }
+
+            .back-button:hover {
+                background: #16a085;
+                color: white;
+                text-decoration: none;
+            }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(22, 160, 133, 0.12);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #16a085, #1abc9c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 auto 1.5rem auto;
+            border: 4px solid #f8f9fa;
+            box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
+        }
+
+        .profile-name {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            text-align: center;
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .application-badge {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            border: 1px solid #ffeaa7;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-approve {
+            background: linear-gradient(135deg, #16a085, #1abc9c);
+            color: white;
+        }
+
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .content-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(22, 160, 133, 0.12);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #f8f9fa;
+            padding-bottom: 1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .internship-type {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .type-zorunlu {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .type-gonullu {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .document-card {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+            .document-card:hover {
+                border-color: #16a085;
+                background: rgba(22, 160, 133, 0.05);
+            }
+
+        .doc-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-name {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .doc-size {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .note-section {
+            background: linear-gradient(135deg, #f8fdfc 0%, #e8f8f5 100%);
+            border-left: 4px solid #16a085;
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .note-title {
+            font-weight: 600;
+            color: #16a085;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .note-content {
+            color: #555;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+
+        @@media (max-width: 768px) {
+            .detail-grid
+
+        {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .profile-section {
+            position: static;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .documents-grid {
+            grid-template-columns: 1fr;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏢 Eğitmen Paneli</h1>
+        <div class="user-info">
+            <div class="user-avatar">EH</div>
+            <span>Ali Hoca - Eğitmen</span>
+            <a href="#" class="logout-btn">Çıkış Yap</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="#" class="back-button">
+            ← Başvuru Listesine Dön
+        </a>
+
+        <div class="detail-grid">
+            <!-- Sol Profil Paneli -->
+            <div class="profile-section">
+                <div class="profile-photo">ZA</div>
+                <div class="profile-name">Zeynep Acar</div>
+                <div class="profile-email">zeynep@email.com</div>
+
+                <div class="application-badge">
+                    🕐 3 gün önce başvurdu
+                </div>
+
+                <div class="quick-actions">
+                    <button class="action-btn btn-approve">
+                        ✅ Başvuruyu Onayla
+                    </button>
+                    <button class="action-btn btn-reject">
+                        ❌ Başvuruyu Reddet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sağ İçerik Paneli -->
+            <div class="content-section">
+                <!-- Kişisel Bilgiler -->
+                <div class="info-card">
+                    <h3 class="card-title">👤 Kişisel Bilgiler</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Ad Soyad</div>
+                            <div class="info-value">Zeynep Acar</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">E-mail</div>
+                            <div class="info-value">zeynep@email.com</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Telefon</div>
+                            <div class="info-value">0507-06-33</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Başvuru Tarihi</div>
+                            <div class="info-value">17.07.2025</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Okul Bilgileri -->
+                <div class="info-card">
+                    <h3 class="card-title">🎓 Okul Bilgileri</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Okul Adı</div>
+                            <div class="info-value">Nevşehir Üniversitesi</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Bölüm</div>
+                            <div class="info-value">Bilgisayar Mühendisliği</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Sınıf</div>
+                            <div class="info-value">2. Sınıf</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Staj Türü</div>
+                            <div class="info-value">
+                                <span class="internship-type type-gonullu">Gönüllü</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staj Bilgileri -->
+                <div class="info-card">
+                    <h3 class="card-title">📅 Staj Detayları</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Başlangıç Tarihi</div>
+                            <div class="info-value">30.08.2025</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Bitiş Tarihi</div>
+                            <div class="info-value">30.08.2025</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Süre</div>
+                            <div class="info-value">60 gün</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Durum</div>
+                            <div class="info-value">
+                                <span style="background: #fff3cd; color: #856404; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem;">
+                                    Değerlendirme Bekliyor
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Belgeler -->
+                <div class="info-card">
+                    <h3 class="card-title">📄 Belgeler</h3>
+                    <div class="documents-grid">
+                        <div class="document-card">
+                            <div class="doc-icon">📄</div>
+                            <div class="doc-name">CV.pdf</div>
+                            <div class="doc-size">2.3 MB</div>
+                        </div>
+                        <div class="document-card">
+                            <div class="doc-icon">🖼️</div>
+                            <div class="doc-name">Fotograf.png</div>
+                            <div class="doc-size">850 KB</div>
+                        </div>
+                        <div class="document-card">
+                            <div class="doc-icon">📋</div>
+                            <div class="doc-name">SigortaGiriş.pdf</div>
+                            <div class="doc-size">1.1 MB</div>
+                        </div>
+                        <div class="document-card">
+                            <div class="doc-icon">🎓</div>
+                            <div class="doc-name">ÖğrenciBelgesi.pdf</div>
+                            <div class="doc-size">1.8 MB</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Başvuru Notu -->
+                <div class="info-card">
+                    <h3 class="card-title">💬 Başvuru Notu</h3>
+                    <div class="note-section">
+                        <div class="note-title">Stajyer Mesajı:</div>
+                        <div class="note-content">
+                            "Frontend geliştirme konusunda deneyim sahibi olmak istiyorum. Özellikle React ve modern JavaScript teknolojilerinde kendimi geliştirmek için bu staj fırsatını çok önemsiyorum. Takım çalışmasına yatkın biriyim ve öğrenmeye açığım."
+                        </div>
+                    </div>
+                </div>
+
+               
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,921 @@
+﻿@using StajyerTakipSistemi.Models.ViewModels
+@model List<OdevAtamaViewModel>
+@{
+    ViewData["Title"] = "Ödev Atama";
+    Layout = null;
+}
+
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 15px rgba(22, 160, 133, 0.4);
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .logout-btn {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+        background: rgba(255,255,255,0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .container-fluid {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .sidebar {
+        width: 250px;
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar li {
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .sidebar li:last-child {
+        border-bottom: none;
+    }
+
+    .sidebar a {
+        text-decoration: none;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        transition: all 0.3s;
+        padding: 8px 12px;
+        border-radius: 8px;
+    }
+
+    .sidebar a:hover {
+        color: #16a085;
+        background: rgba(22, 160, 133, 0.08);
+    }
+
+    .sidebar .active {
+        color: #16a085 !important;
+        font-weight: 600;
+        background: rgba(22, 160, 133, 0.12);
+        border-left: 3px solid #16a085;
+    }
+
+    .main-content {
+        flex: 1;
+    }
+
+    .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(22, 160, 133, 0.12);
+        border-left: 5px solid #16a085;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        color: #333;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .new-assignment-btn {
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+    }
+
+    .new-assignment-btn:hover {
+        background: linear-gradient(135deg, #138d75, #17a2b8);
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .filters-section {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .filter-group label {
+        font-weight: 500;
+        color: #333;
+        font-size: 0.9rem;
+    }
+
+    .filter-group select, .filter-group input {
+        padding: 0.5rem;
+        border: 2px solid #e1e5e9;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s;
+    }
+
+    .filter-group select:focus, .filter-group input:focus {
+        outline: none;
+        border-color: #16a085;
+    }
+
+    .assignments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .assignment-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        position: relative;
+    }
+
+    .assignment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(22, 160, 133, 0.2);
+        border-color: #16a085;
+    }
+
+    .assignment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .assignment-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .assignment-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .difficulty-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .difficulty-kolay {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .difficulty-orta {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .difficulty-zor {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-aktif {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-suresi-doldu {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-tamamlandi {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .assignment-description {
+        color: #666;
+        line-height: 1.5;
+        margin: 1rem 0;
+        font-size: 0.9rem;
+    }
+
+    .assignment-progress {
+        margin: 1.5rem 0;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #16a085, #1abc9c);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .assigned-students {
+        margin: 1rem 0;
+    }
+
+    .students-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .students-count {
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .view-students-btn {
+        background: none;
+        border: none;
+        color: #16a085;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: underline;
+        font-weight: 500;
+    }
+
+    .students-avatars {
+        display: flex;
+        gap: 0.3rem;
+        flex-wrap: wrap;
+    }
+
+    .student-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .assignment-dates {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+
+    .date-item {
+        text-align: center;
+    }
+
+    .date-label {
+        font-size: 0.7rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.3rem;
+    }
+
+    .date-value {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .assignment-actions {
+        display: flex;
+        gap: 0.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 0.5rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .btn-detail {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-detail:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-edit {
+        background: #ffc107;
+        color: #333;
+    }
+
+    .btn-edit:hover {
+        background: #e0a800;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .btn-delete {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background: #c82333;
+        color: white;
+        text-decoration: none;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    /* Students Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        min-width: 500px;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modal-title {
+        margin: 0;
+        color: #333;
+        font-size: 1.3rem;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .student-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .student-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        transition: background 0.3s;
+    }
+
+    .student-item:hover {
+        background: #f8f9fa;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .student-avatar-large {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .student-details h4 {
+        margin: 0 0 0.2rem 0;
+        color: #333;
+    }
+
+    .student-details span {
+        color: #666;
+        font-size: 0.8rem;
+    }
+
+    .completion-status {
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .overdue {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    @@media (max-width: 768px) {
+        .container-fluid {
+            flex-direction: column;
+        }
+        .sidebar {
+            width: 100%;
+        }
+        .assignments-grid {
+            grid-template-columns: 1fr;
+        }
+        .stats-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .page-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+    }
+</style>
+
+<div class="header">
+    <h1>🏢 Eğitmen Paneli</h1>
+    <div class="user-info">
+        <div class="user-avatar">EH</div>
+        <span>@(ViewBag.UserName ?? "Eğitmen") - Eğitmen</span>
+        <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="@Url.Action("Index", "Egitmen")"><span>🏠</span> Ana Sayfa</a></li>
+            <li><a href="@Url.Action("StajyerListesi", "Egitmen")"><span>👥</span> Stajyer Listesi</a></li>
+            <li><a href="@Url.Action("BasvuruDegerlendirme", "Egitmen")"><span>📋</span> Başvuru Değerlendirme</a></li>
+            <li><a href="@Url.Action("OdevAtama", "Egitmen")" class="active"><span>📝</span> Ödev Atama</a></li>
+            <li><a href="#"><span>⚙️</span> Ayarlar</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h2 class="page-title">📝 Ödev Atama & Yönetimi</h2>
+            <a href="@Url.Action("YeniOdev", "Egitmen")" class="new-assignment-btn">
+                ➕ Yeni Ödev Oluştur
+            </a>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Success"]
+            </div>
+        }
+
+        <!-- İstatistikler -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count</div>
+                <div class="stat-label">Toplam Ödev</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count(o => o.Durum == "Aktif")</div>
+                <div class="stat-label">Aktif Ödev</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count(o => o.Durum == "Süresi Doldu")</div>
+                <div class="stat-label">Süresi Dolan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">
+                    @{
+                        var toplamAtanan = Model.Sum(o => o.ToplamAtanan);
+                        var toplamTamamlanan = Model.Sum(o => o.TamamlananSayi);
+                        var tamamlanmaOrani = toplamAtanan > 0 ? (int)((double)toplamTamamlanan / toplamAtanan * 100) : 0;
+                    }
+@tamamlanmaOrani%
+                </div>
+                <div class="stat-label">Tamamlanma Oranı</div>
+            </div>
+        </div>
+
+        <!-- Filtreler -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>Durum</label>
+                    <select id="durumFilter">
+                        <option value="">Tümü</option>
+                        <option value="Aktif">Aktif</option>
+                        <option value="Süresi Doldu">Süresi Dolan</option>
+                        <option value="Tamamlandı">Tamamlanan</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Zorluk Seviyesi</label>
+                    <select id="zorlukFilter">
+                        <option value="">Tümü</option>
+                        <option value="Kolay">Kolay</option>
+                        <option value="Orta">Orta</option>
+                        <option value="Zor">Zor</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Teslim Tarihi</label>
+                    <select id="tarihFilter">
+                        <option value="">Tümü</option>
+                        <option value="bu_hafta">Bu Hafta</option>
+                        <option value="gelecek_hafta">Gelecek Hafta</option>
+                        <option value="gecmis">Geçmiş</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Arama</label>
+                    <input type="text" id="aramaFilter" placeholder="Ödev adı ara...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Ödev Kartları -->
+        @if (Model.Any())
+        {
+            <div class="assignments-grid">
+                @foreach (var odev in Model)
+                {
+                    <div class="assignment-card" data-durum="@odev.Durum" data-zorluk="@odev.ZorlukSeviyesi" data-tarih="@odev.TeslimTarihi.ToString("yyyy-MM-dd")" data-arama="@odev.OdevAdi.ToLower()">
+                        <div class="assignment-header">
+                            <div>
+                                <h3 class="assignment-title">@odev.OdevAdi</h3>
+                                <div class="assignment-meta">
+                                    <span class="difficulty-badge difficulty-@odev.ZorlukSeviyesi.ToLower()">
+                                        @odev.ZorlukSeviyesi
+                                    </span>
+                                    <span>•</span>
+                                    <span>@odev.OlusturmaTarihi.ToString("dd/MM/yyyy")</span>
+                                </div>
+                            </div>
+                            <span class="status-badge status-@odev.Durum.ToLower().Replace(" ", "-")">
+                                @odev.Durum
+                            </span>
+                        </div>
+
+                        <div class="assignment-description">
+                            @odev.Aciklama
+                        </div>
+
+                        <div class="assignment-progress">
+                            <div class="progress-label">
+                                <span>İlerleme</span>
+                                <span>@odev.TamamlananSayi/@odev.ToplamAtanan tamamlandı</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: @{
+                                            var ilerlemeyuzdesi = odev.ToplamAtanan > 0 ? (int)((double)odev.TamamlananSayi / odev.ToplamAtanan * 100) : 0;
+                                    }
+    @@ilerlemeyuzdesi%"></div>
+                        </div>
+                    </div>
+
+                    <div class="assigned-students">
+                        <div class="students-header">
+                            <span class="students-count">@odev.ToplamAtanan stajyere atandı</span>
+                            <button class="view-students-btn" onclick="showStudents(@odev.Id, '@odev.OdevAdi')">
+                                👁️ Stajyerleri Gör
+                            </button>
+                        </div>
+                        <div class="students-avatars">
+                            @for (int i = 0; i < Math.Min(odev.AtananStajyerAdlari.Count, 5); i++)
+                            {
+                                var stajyer = odev.AtananStajyerAdlari[i];
+                                var initials = stajyer.Split(' ').Length > 1
+                                ? stajyer.Split(' ')[0].Substring(0, 1) + stajyer.Split(' ')[1].Substring(0, 1)
+                                : stajyer.Substring(0, Math.Min(2, stajyer.Length));
+                                <div class="student-avatar" title="@stajyer">@initials</div>
+                            }
+                            @if (odev.AtananStajyerAdlari.Count > 5)
+                            {
+                                <div class="student-avatar" title="@(odev.AtananStajyerAdlari.Count - 5) kişi daha">+@(odev.AtananStajyerAdlari.Count - 5)</div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="assignment-dates">
+                        <div class="date-item">
+                            <div class="date-label">Oluşturulma</div>
+                            <div class="date-value">@odev.OlusturmaTarihi.ToString("dd/MM/yyyy")</div>
+                        </div>
+                        <div class="date-item">
+                            <div class="date-label">Teslim Tarihi</div>
+                            <div class="date-value">@odev.TeslimTarihi.ToString("dd/MM/yyyy")</div>
+                        </div>
+                        <div class="date-item">
+                            <div class="date-label">Kalan Süre</div>
+                            <div class="date-value">
+                                @{
+                                    var kalanGun = (odev.TeslimTarihi - DateTime.Now).Days;
+                                    var kalanSure = kalanGun > 0 ? $"{kalanGun} gün" : kalanGun == 0 ? "Bugün" : "Süre doldu";
+                                }
+    @kalanSure
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="assignment-actions">
+                        <a href="#" class="action-btn btn-detail" onclick="odevDetay(@odev.Id)">👁️ Detay</a>
+                        <a href="#" class="action-btn btn-edit" onclick="odevDuzenle(@odev.Id)">✏️ Düzenle</a>
+                        <button class="action-btn btn-delete" onclick="odevSil(@odev.Id, '@odev.OdevAdi')">🗑️ Sil</button>
+                    </div>
+                </div>
+            }
+        </div>
+                }
+                else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <h3>Henüz ödev bulunmuyor</h3>
+                <p>İlk ödevinizi oluşturmak için "Yeni Ödev Oluştur" butonuna tıklayın.</p>
+            </div>
+        }
+    </main>
+</div>
+
+<!-- Stajyer Listesi Modal -->
+<div id="studentsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">Ödev Alan Stajyerler</h3>
+            <button class="close-btn" onclick="closeStudentsModal()">&times;</button>
+        </div>
+        <ul class="student-list" id="studentList">
+            <!-- JavaScript ile doldurulacak -->
+        </ul>
+    </div>
+</div>
+
+
+<script>
+    // Filtreleme
+    document.getElementById('durumFilter').addEventListener('change', filterAssignments);
+    document.getElementById('zorlukFilter').addEventListener('change', filterAssignments);
+    document.getElementById('tarihFilter').addEventListener('change', filterAssignments);
+    document.getElementById('aramaFilter').addEventListener('input', filterAssignments);
+
+    function filterAssignments() {
+        const durum = document.getElementById('durumFilter').value;
+        const zorluk = document.getElementById('zorlukFilter').value;
+        const tarih = document.getElementById('tarihFilter').value;
+        const arama = document.getElementById('aramaFilter').value.toLowerCase();
+
+        const cards = document.querySelectorAll('.
+
+
+    // Ödev buton fonksiyonları
+    function odevDetay(id) {
+        window.location.href = '@Url.Action("OdevDetay", "Egitmen")?id=' + id;
+    }
+
+    function odevDuzenle(id) {
+        window.location.href = '@Url.Action("OdevDuzenle", "Egitmen")?id=' + id;
+    }
+
+    function odevSil(id, odevAdi) {
+        if (confirm('Bu ödevi silmek istediğinizden emin misiniz?\n\n' + odevAdi)) {
+            // Form oluştur ve gönder
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '@Url.Action("OdevSil", "Egitmen")';
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'id';
+            input.value = id;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }

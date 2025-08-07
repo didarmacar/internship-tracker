@@ -1,0 +1,562 @@
+﻿@using StajyerTakipSistemi.Models.ViewModels
+@model List<StajyerListeViewModel>
+@{
+    ViewData["Title"] = "Stajyer Listesi";
+    Layout = null;
+}
+
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 15px rgba(22, 160, 133, 0.4);
+    }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .logout-btn {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .container-fluid {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .sidebar {
+        width: 250px;
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+            .sidebar li:last-child {
+                border-bottom: none;
+            }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+            .sidebar a:hover {
+                color: #16a085;
+                background: rgba(22, 160, 133, 0.08);
+            }
+
+        .sidebar .active {
+            color: #16a085 !important;
+            font-weight: 600;
+            background: rgba(22, 160, 133, 0.12);
+            border-left: 3px solid #16a085;
+        }
+
+    .main-content {
+        flex: 1;
+    }
+
+    .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(22, 160, 133, 0.12);
+        border-left: 5px solid #16a085;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        color: #333;
+        margin: 0 0 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .page-subtitle {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .filters-section {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 0.5rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+
+            .filter-group select:focus, .filter-group input:focus {
+                outline: none;
+                border-color: #16a085;
+            }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .stajyer-table {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .table-content {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+        font-size: 0.9rem;
+    }
+
+    td {
+        font-size: 0.9rem;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .student-avatar {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+
+    .student-details h6 {
+        margin: 0 0 0.2rem 0;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .student-details span {
+        color: #666;
+        font-size: 0.8rem;
+    }
+
+    .status-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-aktif {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-tamamlandi {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-beklemede {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 0.3rem;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #16a085, #1abc9c);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .progress-text {
+        font-size: 0.8rem;
+        color: #666;
+        text-align: center;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #138d75, #17a2b8);
+            transform: translateY(-1px);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+    @@media (max-width: 768px) {
+        .container-fluid
+
+    {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    }
+</style>
+
+<div class="header">
+    <h1>🏢 TechCorp Eğitmen Paneli</h1>
+    <div class="user-info">
+        <div class="user-avatar">EH</div>
+        <span>@(ViewBag.UserName ?? "Eğitmen") - Eğitmen</span>
+        <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="@Url.Action("Index", "Egitmen")"><span>🏠</span> Ana Sayfa</a></li>
+            <li><a href="@Url.Action("StajyerListesi", "Egitmen")" class="active"><span>👥</span> Stajyer Listesi</a></li>
+            <li><a href="@Url.Action("BasvuruDegerlendirme", "Egitmen")"><span>📋</span> Başvuru Değerlendirme</a></li>
+            <li><a href="@Url.Action("OdevAtama", "Egitmen")"><span>📝</span> Ödev Atama</a></li>
+            <li><a href="#"><span>⚙️</span> Ayarlar</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h2 class="page-title">👥 Stajyer Listesi</h2>
+            <p class="page-subtitle">Tüm stajyerleri görüntüle, filtrele ve yönet</p>
+        </div>
+
+        <!-- İstatistikler -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count</div>
+                <div class="stat-label">Toplam Stajyer</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count(s => s.Durum == "Aktif")</div>
+                <div class="stat-label">Aktif</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@Model.Count(s => s.Durum == "Tamamlandı")</div>
+                <div class="stat-label">Tamamlanan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">
+                    @{
+                        var aktifStajyerler = Model.Where(s => s.Durum == "Aktif").ToList();
+                        var ortalamaIlerleme = aktifStajyerler.Any() ? (int)aktifStajyerler.Average(s => s.IlerlemeYuzdesi) : 0;
+                    }
+@ortalamaIlerleme%
+                </div>
+                <div class="stat-label">Ortalama İlerleme</div>
+            </div>
+        </div>
+
+        <!-- Filtreler -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>Durum</label>
+                    <select>
+                        <option value="">Tümü</option>
+                        <option value="Aktif">Aktif</option>
+                        <option value="Tamamlandı">Tamamlandı</option>
+                        <option value="Beklemede">Beklemede</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Staj Türü</label>
+                    <select>
+                        <option value="">Tümü</option>
+                        <option value="Zorunlu">Zorunlu Staj</option>
+                        <option value="Gönüllü">Gönüllü Staj</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Okul</label>
+                    <select>
+                        <option value="">Tümü</option>
+                        <option value="İTÜ">İstanbul Teknik Üniversitesi</option>
+                        <option value="Boğaziçi">Boğaziçi Üniversitesi</option>
+                        <option value="ODTÜ">ODTÜ</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Arama</label>
+                    <input type="text" placeholder="Ad, soyad veya email ara...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Stajyer Tablosu -->
+        <div class="stajyer-table">
+            <div class="table-header">
+                <span>📋</span>
+                <span>Stajyer Bilgileri (@Model.Count kişi)</span>
+            </div>
+            <div class="table-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stajyer</th>
+                            <th>İletişim</th>
+                            <th>Okul/Bölüm</th>
+                            <th>Staj Bilgileri</th>
+                            <th>Durum</th>
+                            <th>İlerleme</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var stajyer in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="student-info">
+                                        <div class="student-avatar">
+                                            @(stajyer.AdSoyad.Split(' ')[0].Substring(0, 1))@(stajyer.AdSoyad.Split(' ').Length > 1 ? stajyer.AdSoyad.Split(' ')[1].Substring(0, 1) : "")
+                                        </div>
+                                        <div class="student-details">
+                                            <h6>@stajyer.AdSoyad</h6>
+                                            <span>ID: #@stajyer.Id</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>@stajyer.Email</div>
+                                    <div style="color: #666; font-size: 0.8rem;">@stajyer.Telefon</div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 500;">@stajyer.OkulAdi</div>
+                                    <div style="color: #666; font-size: 0.8rem;">@stajyer.Bolum</div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 500;">@stajyer.StajTuru</div>
+                                    <div style="color: #666; font-size: 0.8rem;">
+                                        @stajyer.BaslangicTarihi.ToString("dd/MM/yyyy") - @stajyer.BitisTarihi.ToString("dd/MM/yyyy")
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-@stajyer.Durum.ToLower()">
+                                        @stajyer.Durum
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: @stajyer.IlerlemeYuzdesi%"></div>
+                                    </div>
+                                    <div class="progress-text">@stajyer.IlerlemeYuzdesi%</div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="#" class="btn btn-primary">Detay</a>
+                                        <a href="#" class="btn btn-secondary">Düzenle</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>

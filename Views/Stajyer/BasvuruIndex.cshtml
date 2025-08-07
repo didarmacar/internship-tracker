@@ -1,0 +1,239 @@
+﻿@using StajyerTakipSistemi.Models.ViewModels
+@model StajyerBasvuruViewModel
+
+@{
+    ViewData["Title"] = "Stajyer Başvurusu";
+    Layout = null;
+}
+
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logout-btn {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .container-fluid {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .sidebar {
+        width: 250px;
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .sidebar .active {
+            color: #667eea !important;
+            font-weight: 600;
+        }
+
+        .sidebar .disabled {
+            color: #ccc !important;
+            cursor: not-allowed;
+        }
+
+    .main-content {
+        flex: 1;
+    }
+
+    .form-container {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 600;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+</style>
+
+<div class="header">
+    <h1>📋 Stajyer Takip Uygulaması</h1>
+    <div class="user-info">
+        <span>@(ViewBag.UserName ?? "Kullanıcı")</span>
+        <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="@Url.Action("Index", "Stajyer")" class="active"><span>📝</span> Başvuru Yap</a></li>
+            <li><a href="#" class="disabled"><span>📚</span> Ödevlerim</a></li>
+            <li><a href="#" class="disabled"><span>📅</span> Takvim</a></li>
+            <li><a href="#" class="disabled"><span>📊</span> İlerleme</a></li>
+            <li><a href="#" class="disabled"><span>💬</span> Mesajlar</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="form-container">
+            <h2 style="text-align: center; margin-bottom: 2rem;">🎓 Stajyer Başvurusu</h2>
+
+            <form asp-action="BasvuruGonder" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label asp-for="AdSoyad">Ad Soyad *</label>
+                    <input asp-for="AdSoyad" type="text" placeholder="Adınız Soyadınız" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Telefon">Telefon *</label>
+                    <input asp-for="Telefon" type="tel" placeholder="555-123-4567" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email">E-Mail *</label>
+                    <input asp-for="Email" type="email" placeholder="email@example.com" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="StajTuru">Staj Türü *</label>
+                    <select asp-for="StajTuru">
+                        <option value="">Seçiniz</option>
+                        <option value="Zorunlu">Zorunlu Staj</option>
+                        <option value="Gönüllü">Gönüllü Staj</option>
+                        <option value="Yaz">Yaz Stajı</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="StajBaslangicTarihi">Staj Başlangıç Tarihi *</label>
+                    <input asp-for="StajBaslangicTarihi" type="date" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="StajBitisTarihi">Staj Bitiş Tarihi *</label>
+                    <input asp-for="StajBitisTarihi" type="date" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="OkulAdi">Okul Adı *</label>
+                    <input asp-for="OkulAdi" type="text" placeholder="Üniversite Adı" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Bolum">Bölüm *</label>
+                    <input asp-for="Bolum" type="text" placeholder="Bölüm Adı" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Sinif">Sınıf *</label>
+                    <select asp-for="Sinif">
+                        <option value="">Seçiniz</option>
+                        <option value="1">1. Sınıf</option>
+                        <option value="2">2. Sınıf</option>
+                        <option value="3">3. Sınıf</option>
+                        <option value="4">4. Sınıf</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CVDosyasi">CV Dosyası</label>
+                    <input asp-for="CVDosyasi" type="file" accept=".pdf,.doc,.docx" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="FotografDosyasi">Fotoğraf</label>
+                    <input asp-for="FotografDosyasi" type="file" accept="image/*" />
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">🚀 Başvuruyu Gönder</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>

@@ -1,0 +1,209 @@
+﻿@{
+    ViewData["Title"] = "Başvuru Sonucu";
+    Layout = null;
+}
+
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logout-btn {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .container-fluid {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .sidebar {
+        width: 250px;
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+            .sidebar li:last-child {
+                border-bottom: none;
+            }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .sidebar .active {
+            color: #dc3545 !important;
+            font-weight: 600;
+        }
+
+        .sidebar .disabled {
+            color: #ccc !important;
+            cursor: not-allowed;
+        }
+
+    .main-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .status-container {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .status-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .status-title {
+        font-size: 2.5rem;
+        color: #dc3545;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .status-message {
+        color: #666;
+        font-size: 1.2rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+   @@media (max-width: 768px) {
+        .container-fluid
+
+    {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .status-container {
+        padding: 2rem 1rem;
+    }
+
+    }
+</style>
+
+<div class="header">
+    <h1>📋 Stajyer Takip Uygulaması</h1>
+    <div class="user-info">
+        <span>@(ViewBag.UserName ?? "Kullanıcı")</span>
+        <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="@Url.Action("Index", "Stajyer")" class="active"><span>❌</span> Başvuru Sonucu</a></li>
+            <li><a href="#" class="disabled"><span>📚</span> Ödevlerim</a></li>
+            <li><a href="#" class="disabled"><span>📅</span> Takvim</a></li>
+            <li><a href="#" class="disabled"><span>📊</span> İlerleme</a></li>
+            <li><a href="#" class="disabled"><span>💬</span> Mesajlar</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="status-container">
+            <div class="status-icon">😔</div>
+            <h1 class="status-title">Başvurunuz Değerlendirilemedi</h1>
+            <p class="status-message">
+                Ne yazık ki bu dönem için başvurunuz kabul edilemedi.
+                Ancak bu durum gelecekteki fırsatlar için bir engel değildir.
+            </p>
+
+            <a href="@Url.Action("Index", "Home")" class="btn">
+                🏠 Ana Sayfaya Dön
+            </a>
+        </div>
+    </main>
+</div>

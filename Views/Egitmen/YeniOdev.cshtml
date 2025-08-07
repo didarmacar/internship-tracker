@@ -1,0 +1,381 @@
+﻿@using StajyerTakipSistemi.Models.ViewModels
+@model YeniOdevViewModel
+@{
+    ViewData["Title"] = "Yeni Ödev Oluştur";
+    Layout = null;
+}
+
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 15px rgba(22, 160, 133, 0.4);
+    }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .logout-btn {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .container-fluid {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .sidebar {
+        width: 250px;
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+            .sidebar li:last-child {
+                border-bottom: none;
+            }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+            .sidebar a:hover {
+                color: #16a085;
+                background: rgba(22, 160, 133, 0.08);
+            }
+
+        .sidebar .active {
+            color: #16a085 !important;
+            font-weight: 600;
+            background: rgba(22, 160, 133, 0.12);
+            border-left: 3px solid #16a085;
+        }
+
+    .main-content {
+        flex: 1;
+    }
+
+    .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(22, 160, 133, 0.12);
+        border-left: 5px solid #16a085;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        color: #333;
+        margin: 0 0 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .page-subtitle {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .form-container {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(22, 160, 133, 0.12);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #16a085;
+            box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
+        }
+
+        .form-control textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        max-height: 300px;
+        overflow-y: auto;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 6px;
+        transition: background 0.3s;
+    }
+
+        .checkbox-item:hover {
+            background: rgba(22, 160, 133, 0.05);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #138d75, #17a2b8);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(22, 160, 133, 0.3);
+        }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            text-decoration: none;
+            color: white;
+        }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .alert-danger {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    @@media (max-width: 768px) {
+        .container-fluid
+
+    {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .checkbox-group {
+        grid-template-columns: 1fr;
+    }
+
+    }
+</style>
+
+<div class="header">
+    <h1>🏢 Eğitmen Paneli</h1>
+    <div class="user-info">
+        <div class="user-avatar">EH</div>
+        <span>@(ViewBag.UserName ?? "Eğitmen") - Eğitmen</span>
+        <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="@Url.Action("Index", "Egitmen")"><span>🏠</span> Ana Sayfa</a></li>
+            <li><a href="@Url.Action("StajyerListesi", "Egitmen")"><span>👥</span> Stajyer Listesi</a></li>
+            <li><a href="@Url.Action("BasvuruDegerlendirme", "Egitmen")"><span>📋</span> Başvuru Değerlendirme</a></li>
+            <li><a href="@Url.Action("OdevAtama", "Egitmen")" class="active"><span>📝</span> Ödev Atama</a></li>
+            <li><a href="#"><span>⚙️</span> Ayarlar</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h2 class="page-title">➕ Yeni Ödev Oluştur</h2>
+            <p class="page-subtitle">Stajyerlere atanacak yeni bir ödev oluşturun</p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                <ul style="margin: 0; padding-left: 20px;">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <div class="form-container">
+            <form asp-action="YeniOdev" method="post">
+                <div class="form-group">
+                    <label asp-for="OdevAdi">Ödev Adı *</label>
+                    <input asp-for="OdevAdi" class="form-control" placeholder="Örn: JavaScript Temelleri" required />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Aciklama">Açıklama *</label>
+                    <textarea asp-for="Aciklama" class="form-control" placeholder="Ödevin detayları, gereksinimler ve beklentiler..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="TeslimTarihi">Teslim Tarihi *</label>
+                    <input asp-for="TeslimTarihi" type="datetime-local" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ZorlukSeviyesi">Zorluk Seviyesi *</label>
+                    <select asp-for="ZorlukSeviyesi" class="form-control" required>
+                        <option value="">Seçiniz</option>
+                        <option value="Kolay">Kolay</option>
+                        <option value="Orta">Orta</option>
+                        <option value="Zor">Zor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Stajyer Seçimi * (Atanacak Stajyerler)</label>
+                    <div class="checkbox-group">
+                        @if (ViewBag.AktifStajyerler != null)
+                        {
+                            @foreach (dynamic stajyer in ViewBag.AktifStajyerler)
+                            {
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="SeciliStajyerler" value="@stajyer.Id" id="stajyer_@stajyer.Id" />
+                                    <label for="stajyer_@stajyer.Id">@stajyer.AdSoyad</label>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>Aktif stajyer bulunamadı.</p>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="@Url.Action("OdevAtama", "Egitmen")" class="btn btn-secondary">↩️ İptal</a>
+                    <button type="submit" class="btn btn-primary">🚀 Ödev Oluştur</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>

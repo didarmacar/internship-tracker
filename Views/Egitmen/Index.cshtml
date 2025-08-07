@@ -1,0 +1,441 @@
+﻿@{
+    ViewData["Title"] = "Eğitmen Dashboard";
+    Layout = null;
+}
+
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 15px rgba(22, 160, 133, 0.4);
+    }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .logout-btn {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+    .container-fluid {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .sidebar {
+        width: 250px;
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+            .sidebar li:last-child {
+                border-bottom: none;
+            }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+            .sidebar a:hover {
+                color: #16a085;
+                background: rgba(22, 160, 133, 0.08);
+                border-radius: 8px;
+            }
+
+        .sidebar .active {
+            color: #16a085 !important;
+            font-weight: 600;
+            background: rgba(22, 160, 133, 0.12);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-left: 3px solid #16a085;
+        }
+
+    .main-content {
+        flex: 1;
+    }
+
+    .welcome-section {
+        background: linear-gradient(135deg, #ffffff 0%, #f4fffe 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(22, 160, 133, 0.12);
+        border-left: 5px solid #16a085;
+    }
+
+    .welcome-title {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-subtitle {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(22, 160, 133, 0.18);
+        }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .card-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .badge-warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-success {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-info {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #16a085, #1abc9c);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .list-item {
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+    .list-item-name {
+        color: #333;
+        font-weight: 500;
+    }
+
+    .list-item-meta {
+        color: #666;
+        font-size: 0.8rem;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #138d75 0%, #17a2b8 100%);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 160, 133, 0.4);
+        }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .action-card {
+        background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+    }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            color: white;
+            text-decoration: none;
+        }
+
+    .action-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-title {
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+    }
+
+    .action-desc {
+        font-size: 0.8rem;
+        opacity: 0.9;
+    }
+
+    @@media (max-width: 768px) {
+        .container-fluid
+
+    {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    }
+</style>
+
+<div class="header">
+    <h1>🏢 Eğitmen Paneli</h1>
+    <div class="user-info">
+        <div class="user-avatar">AH</div>
+        <span>@(ViewBag.UserName ?? "Ali Hoca") - Eğitmen</span>
+        <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="@Url.Action("Index", "Egitmen")" class="active"><span>🏠</span> Ana Sayfa</a></li>
+            <li><a href="@Url.Action("StajyerListesi", "Egitmen")"><span>👥</span> Stajyer Listesi</a></li>
+            <li><a href="@Url.Action("BasvuruDegerlendirme", "Egitmen")"><span>📋</span> Başvuru Değerlendirme</a></li>
+            <li><a href="@Url.Action("OdevAtama", "Egitmen")"><span>📝</span> Ödev Atama</a></li>
+            <li><a href="#"><span>⚙️</span> Ayarlar</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="font-size: 3rem;">👨‍🏫</div>
+                <div>
+                    <h2 class="welcome-title">Hoş geldin, @(ViewBag.UserName?.Split(' ')[0] ?? "Ali")!</h2>
+                    <p class="welcome-subtitle">Stajyer yönetim paneline hoş geldin. Bugün 3 bekleyen başvuru ve 5 aktif stajyer var.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hızlı İşlemler -->
+        <div class="quick-actions">
+            <a href="@Url.Action("StajyerListesi", "Egitmen")" class="action-card">
+                <div class="action-icon">👥</div>
+                <div class="action-title">Stajyer Listesi</div>
+                <div class="action-desc">Tüm stajyerleri görüntüle</div>
+            </a>
+            <a href="@Url.Action("BasvuruDegerlendirme", "Egitmen")" class="action-card" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);">
+                <div class="action-icon">📋</div>
+                <div class="action-title">Başvuruları İncele</div>
+                <div class="action-desc">Bekleyen başvuruları değerlendir</div>
+            </a>
+            <a href="@Url.Action("OdevAtama", "Egitmen")" class="action-card" style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);">
+                <div class="action-icon">📝</div>
+                <div class="action-title">Ödev Ata</div>
+                <div class="action-desc">Yeni ödev oluştur</div>
+            </a>
+            <a href="#" class="action-card" style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);">
+                <div class="action-icon">📊</div>
+                <div class="action-title">Raporları Gör</div>
+                <div class="action-desc">İstatistikler ve analizler</div>
+            </a>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- İstatistikler -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📊 Genel İstatistikler</h3>
+                </div>
+                <div class="stat-number">8</div>
+                <div class="stat-label">Toplam Stajyer</div>
+                <hr style="margin: 1rem 0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Aktif: <strong>5</strong></span>
+                    <span>Tamamlanan: <strong>3</strong></span>
+                </div>
+            </div>
+
+            <!-- Bekleyen İşler -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">⏳ Bekleyen İşler</h3>
+                    <span class="card-badge badge-warning">3 Bekliyor</span>
+                </div>
+                <div class="list-item">
+                    <div>
+                        <div class="list-item-name">Başvuru Değerlendirmesi</div>
+                        <div class="list-item-meta">3 yeni başvuru</div>
+                    </div>
+                    <button class="btn">İncele</button>
+                </div>
+                <div class="list-item">
+                    <div>
+                        <div class="list-item-name">Ödev Değerlendirmesi</div>
+                        <div class="list-item-meta">2 teslim edildi</div>
+                    </div>
+                    <button class="btn">Değerlendir</button>
+                </div>
+            </div>
+
+            <!-- Aktif Stajyerler -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">👥 Aktif Stajyerler</h3>
+                    <span class="card-badge badge-success">5 Aktif</span>
+                </div>
+                <div class="list-item">
+                    <div>
+                        <div class="list-item-name">Ahmet Yılmaz</div>
+                        <div class="list-item-meta">Frontend Developer</div>
+                    </div>
+                    <button class="btn">Profil</button>
+                </div>
+                <div class="list-item">
+                    <div>
+                        <div class="list-item-name">Elif Kaya</div>
+                        <div class="list-item-meta">Backend Developer</div>
+                    </div>
+                    <button class="btn">Profil</button>
+                </div>
+                <div class="list-item">
+                    <div>
+                        <div class="list-item-name">Mehmet Demir</div>
+                        <div class="list-item-meta">Full Stack Developer</div>
+                    </div>
+                    <button class="btn">Profil</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
