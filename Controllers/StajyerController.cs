@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
@@ -6,16 +6,19 @@ using Microsoft.EntityFrameworkCore;
 using StajyerTakipSistemi.Data;
 using StajyerTakipSistemi.Models;
 using StajyerTakipSistemi.Models.ViewModels;
+using StajyerTakipSistemi.Services;
 
 namespace StajyerTakipSistemi.Controllers
 {
     public class StajyerController : Controller
     {
         private readonly StajyerTakipDbContext _context;
+        private readonly IStajyerService _stajyerService;
 
-        public StajyerController(StajyerTakipDbContext context)
+        public StajyerController(StajyerTakipDbContext context, IStajyerService stajyerService)
         {
             _context = context;
+            _stajyerService = stajyerService;
         }
 
         public async Task<IActionResult> Index()
@@ -27,7 +30,7 @@ namespace StajyerTakipSistemi.Controllers
             }
 
             // Kullanıcının başvuru durumunu kontrol et
-            var basvuruDurumu = GetUserBasvuruDurumu(userId.Value);
+            var basvuruDurumu = await _stajyerService.GetUserBasvuruDurumu(userId.Value);
 
             if (basvuruDurumu == "Yapilmamis")
             {
@@ -43,17 +46,17 @@ namespace StajyerTakipSistemi.Controllers
             }
             else if (basvuruDurumu == "Onaylandi")
             {
-                // Mevcut dashboard kodu
+                // Dashboard with real data from service
                 string userName = HttpContext.Session.GetString("UserName") ?? "Kullanıcı";
                 var dashboardData = new StajyerDashboardViewModel
                 {
                     KullaniciAdi = userName,
                     KullaniciInitials = GetInitials(userName),
-                    BekleyenOdevler = GetSampleTasks(),
-                    BugunEgitimleri = GetBugunEgitimleri(),
-                    GenelIlerleme = 68,
-                    BuHaftaIlerleme = 85,
-                    SonAktiviteler = GetRecentActivities()
+                    BekleyenOdevler = await _stajyerService.GetStajyerOdevleri(userId.Value),
+                    BugunEgitimleri = await _stajyerService.GetStajyerEgitimleri(userId.Value),
+                    GenelIlerleme = await _stajyerService.CalculateGenelIlerleme(userId.Value),
+                    BuHaftaIlerleme = await _stajyerService.CalculateBuHaftaIlerleme(userId.Value),
+                    SonAktiviteler = await _stajyerService.GetStajyerAktiviteleri(userId.Value)
                 };
                 return View("Index", dashboardData);
             }
@@ -70,7 +73,7 @@ namespace StajyerTakipSistemi.Controllers
             }
 
             // Başvuru durumu kontrolü
-            var basvuruDurumu = GetUserBasvuruDurumu(userId.Value);
+            var basvuruDurumu = await _stajyerService.GetUserBasvuruDurumu(userId.Value);
             if (basvuruDurumu != "Onaylandi")
             {
                 return RedirectToAction("Index");
@@ -78,22 +81,15 @@ namespace StajyerTakipSistemi.Controllers
 
             string userName = HttpContext.Session.GetString("UserName") ?? "Kullanıcı";
 
-            // Örnek ödev verisi
-            var odevler = new List<dynamic>
-            {
-                new { GorevAdi = "JavaScript Temelleri", Durum = "Bekliyor", TeslimTarihi = "3 gün kaldı", DurumClass = "text-warning" },
-                new { GorevAdi = "HTML/CSS Website", Durum = "Tamamlandı", TeslimTarihi = "2 gün önce", DurumClass = "text-success" },
-                new { GorevAdi = "React Projesi", Durum = "Devam Ediyor", TeslimTarihi = "1 hafta kaldı", DurumClass = "text-info" },
-                new { GorevAdi = "Database Tasarımı", Durum = "Gecikmiş", TeslimTarihi = "1 gün gecikti", DurumClass = "text-danger" }
-            };
-
+            // Real assignment data from service
+            var odevler = await _stajyerService.GetStajyerOdevleri(userId.Value);
             ViewBag.Odevler = odevler;
             ViewBag.UserName = userName;
 
             return View();
         }
 
-        public IActionResult Takvim()
+        public async Task<IActionResult> Takvim()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -102,7 +98,7 @@ namespace StajyerTakipSistemi.Controllers
             }
 
             // Başvuru durumu kontrolü
-            var basvuruDurumu = GetUserBasvuruDurumu(userId.Value);
+            var basvuruDurumu = await _stajyerService.GetUserBasvuruDurumu(userId.Value);
             if (basvuruDurumu != "Onaylandi")
             {
                 return RedirectToAction("Index");
@@ -118,7 +114,7 @@ namespace StajyerTakipSistemi.Controllers
 
             return View();
         }
-        public IActionResult Mesajlar()
+        public async Task<IActionResult> Mesajlar()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -127,7 +123,7 @@ namespace StajyerTakipSistemi.Controllers
             }
 
             // Başvuru durumu kontrolü
-            var basvuruDurumu = GetUserBasvuruDurumu(userId.Value);
+            var basvuruDurumu = await _stajyerService.GetUserBasvuruDurumu(userId.Value);
             if (basvuruDurumu != "Onaylandi")
             {
                 return RedirectToAction("Index");
@@ -139,7 +135,7 @@ namespace StajyerTakipSistemi.Controllers
             return View();
         }
 
-        public IActionResult KahveKutusu()
+        public async Task<IActionResult> KahveKutusu()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -148,7 +144,7 @@ namespace StajyerTakipSistemi.Controllers
             }
 
             // Başvuru durumu kontrolü
-            var basvuruDurumu = GetUserBasvuruDurumu(userId.Value);
+            var basvuruDurumu = await _stajyerService.GetUserBasvuruDurumu(userId.Value);
             if (basvuruDurumu != "Onaylandi")
             {
                 return RedirectToAction("Index");
@@ -174,10 +170,7 @@ namespace StajyerTakipSistemi.Controllers
             return View();
         }
 
-        private string GetUserBasvuruDurumu(int userId)
-        {
-            return "Onaylandi";
-        }
+
 
         [HttpPost]
         public async Task<IActionResult> BasvuruGonder(StajyerBasvuruViewModel model)
@@ -207,7 +200,7 @@ namespace StajyerTakipSistemi.Controllers
                     fotoPath = await SaveFile(model.FotografDosyasi, "foto");
                 }
 
-                await UpdateUserBasvuru(userId.Value, model, cvPath, fotoPath);
+                await _stajyerService.UpdateUserBasvuru(userId.Value, model, cvPath, fotoPath);
 
                 TempData["SuccessMessage"] = "Başvurunuz başarıyla gönderildi!";
                 return RedirectToAction("Index");
@@ -295,77 +288,6 @@ namespace StajyerTakipSistemi.Controllers
             return fullName.Substring(0, Math.Min(2, fullName.Length)).ToUpper();
         }
 
-        private List<OdevViewModel> GetSampleTasks()
-        {
-            // Örnek görevler
-            return new List<OdevViewModel>
-            {
-                new OdevViewModel { GorevAdi = "JavaScript Temelleri Projesi", Durum = "Bekliyor" },
-                new OdevViewModel { GorevAdi = "HTML/CSS Website Tasarımı", Durum = "Tamamlandı" },
-                new OdevViewModel { GorevAdi = "Veritabanı Şema Tasarımı", Durum = "Gecikmiş" }
-            };
-        }
 
-        private List<EgitimViewModel> GetBugunEgitimleri()
-        {
-            return new List<EgitimViewModel>
-            {
-                new EgitimViewModel { Saat = "10:00 - 11:30", Baslik = "React Hooks Eğitimi" },
-                new EgitimViewModel { Saat = "14:00 - 15:00", Baslik = "Proje Değerlendirme Toplantısı" }
-            };
-        }
-
-        private List<AktiviteViewModel> GetRecentActivities()
-        {
-            return new List<AktiviteViewModel>
-            {
-                new AktiviteViewModel
-                {
-                    Icon = "✅",
-                    IconClass = "activity-completed",
-                    Baslik = "CSS Grid projesi tamamlandı",
-                    Aciklama = "Günlük rapor gönderildi"
-                },
-                new AktiviteViewModel
-                {
-                    Icon = "📖",
-                    IconClass = "activity-progress",
-                    Baslik = "Mentor ile görüşme yapıldı",
-                    Aciklama = "JavaScript makale okundu"
-                }
-            };
-        }
-    }
-
-    // ViewModel sınıfları
-    public class StajyerDashboardViewModel
-    {
-        public string KullaniciAdi { get; set; } = string.Empty;
-        public string KullaniciInitials { get; set; } = string.Empty;
-        public List<OdevViewModel> BekleyenOdevler { get; set; } = new List<OdevViewModel>();
-        public List<EgitimViewModel> BugunEgitimleri { get; set; } = new List<EgitimViewModel>();
-        public int GenelIlerleme { get; set; }
-        public int BuHaftaIlerleme { get; set; }
-        public List<AktiviteViewModel> SonAktiviteler { get; set; } = new List<AktiviteViewModel>();
-    }
-
-    public class OdevViewModel
-    {
-        public string GorevAdi { get; set; } = string.Empty;
-        public string Durum { get; set; } = string.Empty;
-    }
-
-    public class EgitimViewModel
-    {
-        public string Saat { get; set; } = string.Empty;
-        public string Baslik { get; set; } = string.Empty;
-    }
-
-    public class AktiviteViewModel
-    {
-        public string Icon { get; set; } = string.Empty;
-        public string IconClass { get; set; } = string.Empty;
-        public string Baslik { get; set; } = string.Empty;
-        public string Aciklama { get; set; } = string.Empty;
     }
 }
