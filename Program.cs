@@ -10,6 +10,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<StajyerTakipDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Business Services
+builder.Services.AddScoped<StajyerTakipSistemi.Services.IStajyerService, StajyerTakipSistemi.Services.StajyerService>();
+builder.Services.AddScoped<StajyerTakipSistemi.Services.IEgitmenService, StajyerTakipSistemi.Services.EgitmenService>();
+
 // Session support
 builder.Services.AddSession(options =>
 {
@@ -39,7 +43,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=Login}/{id?}");
 
-// Initialize database - Artýk aktif
+// Initialize database - Artï¿½k aktif
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<StajyerTakipDbContext>();
