@@ -1,0 +1,739 @@
+﻿@{
+    ViewData["Title"] = "Başvuru Sonucu";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Başvuru Sonucu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8efff 30%, #d8e5ff 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(135, 206, 235, 0.3), rgba(184, 198, 219, 0.1));
+            border-radius: 50%;
+            animation: floatAndFade 8s ease-in-out infinite;
+        }
+
+            .particle:nth-child(1) {
+                width: 100px;
+                height: 100px;
+                left: 15%;
+                top: 20%;
+                animation-delay: 0s;
+            }
+
+            .particle:nth-child(2) {
+                width: 80px;
+                height: 80px;
+                left: 75%;
+                top: 60%;
+                animation-delay: 3s;
+            }
+
+            .particle:nth-child(3) {
+                width: 120px;
+                height: 120px;
+                left: 85%;
+                top: 10%;
+                animation-delay: 6s;
+            }
+
+        @@keyframes floatAndFade {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+        }
+
+        25% {
+            opacity: 0.4;
+            transform: translateY(-10px) scale(1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: translateY(-20px) scale(1.1);
+        }
+
+        75% {
+            opacity: 0.3;
+            transform: translateY(-15px) scale(0.9);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateY(10px) scale(0.7);
+        }
+
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4682b4 0%, #5a7fb8 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(70, 130, 180, 0.4);
+            position: relative;
+            z-index: 999;
+            height: 70px;
+        }
+
+            .header h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+                color: white;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #4682b4;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.9);
+                color: #4682b4;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
+        /* Hamburger Menu */
+        .hamburger-menu {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+        }
+
+            .hamburger-menu:hover {
+                background: rgba(255, 255, 255, 1);
+                transform: scale(1.05);
+            }
+
+        .hamburger-icon {
+            width: 24px;
+            height: 18px;
+            position: relative;
+            transition: 0.3s ease-in-out;
+        }
+
+            .hamburger-icon span {
+                display: block;
+                position: absolute;
+                height: 3px;
+                width: 100%;
+                background: #4682b4;
+                border-radius: 3px;
+                transition: 0.3s ease-in-out;
+            }
+
+                .hamburger-icon span:nth-child(1) {
+                    top: 0px;
+                }
+
+                .hamburger-icon span:nth-child(2) {
+                    top: 7px;
+                }
+
+                .hamburger-icon span:nth-child(3) {
+                    top: 14px;
+                }
+
+        /* Hamburger animasyonu */
+        .hamburger-menu.active .hamburger-icon span:nth-child(1) {
+            top: 7px;
+            transform: rotate(135deg);
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(3) {
+            top: 7px;
+            transform: rotate(-135deg);
+        }
+
+        /* Layout container */
+        .layout-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(70, 130, 180, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 998;
+            overflow-y: auto;
+            padding-top: 5rem;
+        }
+
+            /* Sidebar kapalı*/
+            .sidebar.collapsed {
+                width: 80px;
+            }
+
+                .sidebar.collapsed .menu-text {
+                    display: none;
+                }
+
+                .sidebar.collapsed a {
+                    justify-content: center;
+                    padding: 18px 12px;
+                }
+
+                    .sidebar.collapsed a span:first-child {
+                        margin: 0;
+                        font-size: 1.3rem;
+                    }
+
+            /* Sidebar menü stilleri  */
+            .sidebar ul {
+                list-style: none;
+                padding: 0 1rem;
+                margin: 0;
+            }
+
+            .sidebar li {
+                margin-bottom: 8px;
+            }
+
+            .sidebar a {
+                text-decoration: none;
+                color: #333;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 500;
+                transition: all 0.3s;
+                padding: 16px 18px;
+                border-radius: 12px;
+                white-space: nowrap;
+                position: relative;
+            }
+
+                .sidebar a:hover {
+                    color: #4682b4;
+                    background: rgba(70, 130, 180, 0.1);
+                }
+
+            .sidebar .active {
+                color: #dc3545 !important;
+                font-weight: 600;
+                background: rgba(220, 53, 69, 0.15);
+                border-left: 3px solid #dc3545;
+            }
+
+            /* Disabled menu items */
+            .sidebar .disabled {
+                color: #bbb !important;
+                cursor: not-allowed !important;
+                opacity: 0.6 !important;
+                pointer-events: none !important;
+                position: relative;
+                background: rgba(187, 187, 187, 0.05) !important;
+            }
+
+                .sidebar .disabled:hover {
+                    background: rgba(187, 187, 187, 0.05) !important;
+                    color: #bbb !important;
+                    transform: none !important;
+                }
+
+                .sidebar .disabled span {
+                    color: #bbb !important;
+                }
+
+                .sidebar .disabled::before {
+                    content: "🔒";
+                    position: absolute;
+                    right: 15px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    font-size: 0.8rem;
+                    opacity: 0.5;
+                    color: #bbb;
+                }
+
+                .sidebar .disabled::after {
+                    content: "Başvuru onayından sonra kullanılabilir";
+                    position: absolute;
+                    left: 100%;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: #333;
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    font-size: 0.8rem;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: all 0.3s ease;
+                    z-index: 1000;
+                    margin-left: 10px;
+                    white-space: nowrap;
+                    pointer-events: auto;
+                }
+
+                .sidebar .disabled:hover::after {
+                    opacity: 1;
+                    visibility: visible;
+                }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Message badge */
+        .message-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+            display: inline-block;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Sidebar overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 997;
+            transition: opacity 0.3s ease;
+        }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+        .status-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+            max-width: 700px;
+            width: 90%;
+            margin: 2rem;
+        }
+
+        .status-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            color: #dc3545;
+        }
+
+        .status-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: #dc3545;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .status-message {
+            color: #666;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .rejection-reason {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .rejection-label {
+            font-weight: 600;
+            color: #dc3545;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .rejection-text {
+            color: #721c24;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, #4682b4 0%, #5a7fb8 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0.5rem;
+        }
+
+            .btn:hover {
+                background: linear-gradient(135deg, #3a70a2 0%, #4e6ea6 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(70, 130, 180, 0.4);
+                color: white;
+                text-decoration: none;
+            }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+            .btn-logout:hover {
+                background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+                box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+            }
+
+        /* Responsive */
+        @@media (max-width: 1024px) {
+            .sidebar
+
+        {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: calc(100vh - 70px);
+            width: 280px;
+            z-index: 998;
+            transform: translateX(-100%);
+            padding-top: 1rem;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 280px;
+        }
+
+        .main-content {
+            padding: 1rem;
+        }
+
+        .sidebar .disabled::after {
+            display: none;
+        }
+
+        }
+
+        @@media (max-width: 768px) {
+            .header
+
+        {
+            padding: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+        }
+
+        .user-info span {
+            display: none;
+        }
+
+        .status-container {
+            padding: 2rem 1rem;
+            margin: 1rem;
+        }
+
+        .btn {
+            display: block;
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+
+        }
+
+        @@media (max-width: 480px) {
+            .hamburger-menu
+
+        {
+            left: 10px;
+            top: 75px;
+        }
+
+        }
+
+        /* Animation keyframes */
+        @@keyframes pageLoad {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .layout-container {
+            animation: pageLoad 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="font-size: 1.5rem;">🌱</div>
+            <div>
+                <h1>Stajyer Paneli</h1>
+            </div>
+        </div>
+        <div class="user-info">
+            <span>@(ViewBag.UserName ?? "Kullanıcı")</span>
+            <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+        </div>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" onclick="toggleSidebar()">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <div class="layout-container" id="layoutContainer">
+        <aside class="sidebar" id="sidebar">
+            <ul>
+                <li><a href="#" class="disabled"><span>🏡</span> <span class="menu-text">Ana Sayfa</span></a></li>
+                <li><a href="#" class="disabled"><span>✨</span> <span class="menu-text">Ödevlerim</span></a></li>
+                <li><a href="#" class="disabled"><span>📆</span> <span class="menu-text">Eğitimler</span></a></li>
+                <li><a href="#" class="disabled"><span>📭</span> <span class="menu-text">Duyurular</span></a></li>
+                <li><a href="#" class="active"><span>📝</span> <span class="menu-text">Başvuru Bilgilerim</span></a></li>
+                <li><a href="#" class="disabled"><span>☕</span> <span class="menu-text">Kahve Kutusu</span></a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div class="status-container">
+                <div class="status-icon">📋</div>
+                <h1 class="status-title">Başvurunuz Reddedilmiştir</h1>
+                <p class="status-message">
+                    Ne yazık ki bu dönem için başvurunuz kabul edilemedi.
+                    Aşağıdaki gerekçe incelenerek eksiklikler giderilebilir.
+                </p>
+
+                @{
+                    // Burada ViewBag'den red nedenini alacaksınız
+                    var redNedeni = ViewBag.RedNedeni as string ?? "Belirtilmemiş";
+                }
+
+                <div class="rejection-reason">
+                    <div class="rejection-label">Red Gerekçesi:</div>
+                    <div class="rejection-text">@redNedeni</div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <a href="@Url.Action("Logout", "Auth")" class="btn btn-logout">
+                        🚪 Sistemden Çık
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let sidebarState = 'expanded';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSidebarClasses();
+
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 1024) {
+                    if (sidebarState !== 'collapsed') {
+                        sidebarState = 'collapsed';
+                        updateSidebarClasses();
+                    }
+                }
+            });
+        });
+
+        function toggleSidebar() {
+            const isDesktop = window.innerWidth > 1024;
+
+            if (isDesktop) {
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            } else {
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            }
+
+            updateSidebarClasses();
+        }
+
+        function closeSidebar() {
+            if (window.innerWidth <= 1024) {
+                sidebarState = 'collapsed';
+                updateSidebarClasses();
+            }
+        }
+
+        function updateSidebarClasses() {
+            const sidebar = document.getElementById('sidebar');
+            const layoutContainer = document.getElementById('layoutContainer');
+            const hamburger = document.querySelector('.hamburger-menu');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            sidebar.classList.remove('active', 'collapsed');
+            layoutContainer.classList.remove('sidebar-collapsed');
+            hamburger.classList.remove('active');
+            overlay.classList.remove('active');
+
+            if (window.innerWidth <= 1024) {
+                if (sidebarState === 'expanded') {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    hamburger.classList.add('active');
+                } else {
+                    sidebar.classList.add('collapsed');
+                }
+            } else {
+                if (sidebarState === 'collapsed') {
+                    sidebar.classList.add('collapsed');
+                    layoutContainer.classList.add('sidebar-collapsed');
+                } else {
+                    hamburger.classList.add('active');
+                }
+            }
+        }
+
+        // Sidebar animation
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                if (!document.querySelector('.sidebar').classList.contains('collapsed')) {
+                    this.style.transform = 'translateX(8px)';
+                }
+            });
+
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Handle clicks outside sidebar on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 1024 && sidebarState === 'expanded') {
+                const sidebar = document.getElementById('sidebar');
+                const hamburger = document.querySelector('.hamburger-menu');
+
+                if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+
+        document.getElementById('sidebar').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+
+        console.log('📋 Başvuru reddedildi sayfası yüklendi');
+    </script>
+</body>
+</html>

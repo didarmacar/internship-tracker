@@ -1,0 +1,878 @@
+﻿@model List<StajyerTakipSistemi.Models.EgitmenDuyurusu>
+@{
+    ViewData["Title"] = "Duyuru Yönetimi";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Duyuru Yönetimi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 30%, #dee2e6 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(46, 125, 50, 0.3), rgba(27, 94, 32, 0.1));
+            border-radius: 50%;
+            animation: floatAndFade 8s ease-in-out infinite;
+        }
+
+            .particle:nth-child(1) {
+                width: 100px;
+                height: 100px;
+                left: 15%;
+                top: 20%;
+                animation-delay: 0s;
+            }
+
+            .particle:nth-child(2) {
+                width: 80px;
+                height: 80px;
+                left: 75%;
+                top: 60%;
+                animation-delay: 3s;
+            }
+
+            .particle:nth-child(3) {
+                width: 120px;
+                height: 120px;
+                left: 85%;
+                top: 10%;
+                animation-delay: 6s;
+            }
+
+        @@keyframes floatAndFade {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+        }
+
+        25% {
+            opacity: 0.4;
+            transform: translateY(-10px) scale(1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: translateY(-20px) scale(1.1);
+        }
+
+        75% {
+            opacity: 0.3;
+            transform: translateY(-15px) scale(0.9);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateY(10px) scale(0.7);
+        }
+
+        }
+
+        .header {
+            background: #2d5016;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(45, 80, 22, 0.4);
+            position: relative;
+            z-index: 999;
+            height: 70px;
+        }
+
+            .header h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+                color: white;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: white;
+            color: #2d5016;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #2d5016;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.9);
+                color: #2d5016;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
+        /* Hamburger Menu */
+        .hamburger-menu {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+        }
+
+            .hamburger-menu:hover {
+                background: rgba(255, 255, 255, 1);
+                transform: scale(1.05);
+            }
+
+        .hamburger-icon {
+            width: 24px;
+            height: 18px;
+            position: relative;
+            transition: 0.3s ease-in-out;
+        }
+
+            .hamburger-icon span {
+                display: block;
+                position: absolute;
+                height: 3px;
+                width: 100%;
+                background: #2d5016;
+                border-radius: 3px;
+                transition: 0.3s ease-in-out;
+            }
+
+                .hamburger-icon span:nth-child(1) {
+                    top: 0px;
+                }
+
+                .hamburger-icon span:nth-child(2) {
+                    top: 7px;
+                }
+
+                .hamburger-icon span:nth-child(3) {
+                    top: 14px;
+                }
+
+        /* Hamburger animasyonu */
+        .hamburger-menu.active .hamburger-icon span:nth-child(1) {
+            top: 7px;
+            transform: rotate(135deg);
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(3) {
+            top: 7px;
+            transform: rotate(-135deg);
+        }
+
+        /* Layout container */
+        .layout-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(76, 175, 80, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 998;
+            overflow-y: auto;
+            padding-top: 5rem;
+        }
+
+            /* Sidebar kapalı*/
+            .sidebar.collapsed {
+                width: 80px;
+            }
+
+                .sidebar.collapsed .menu-text {
+                    display: none;
+                }
+
+                .sidebar.collapsed a {
+                    justify-content: center;
+                    padding: 18px 12px;
+                }
+
+                    .sidebar.collapsed a span:first-child {
+                        margin: 0;
+                        font-size: 1.3rem;
+                    }
+
+            /* Sidebar menü stilleri  */
+            .sidebar ul {
+                list-style: none;
+                padding: 0 1rem;
+                margin: 0;
+            }
+
+            .sidebar li {
+                margin-bottom: 8px;
+            }
+
+            .sidebar a {
+                text-decoration: none;
+                color: #333;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 500;
+                transition: all 0.3s;
+                padding: 16px 18px;
+                border-radius: 12px;
+                white-space: nowrap;
+            }
+
+                .sidebar a:hover {
+                    color: #2e7d32;
+                    background: rgba(76, 175, 80, 0.1);
+                }
+
+            .sidebar .active {
+                color: #2e7d32 !important;
+                font-weight: 600;
+                background: rgba(76, 175, 80, 0.15);
+                border-left: 3px solid #4caf50;
+            }
+
+        /* Sidebar overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 997;
+            transition: opacity 0.3s ease;
+        }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Content padding  */
+        .content-wrapper {
+            padding: 2rem;
+            margin-left: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .layout-container:not(.sidebar-collapsed) .content-wrapper {
+            margin-left: 0;
+            padding: 2rem 2rem 2rem 1rem;
+        }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-left: 5px solid #4caf50;
+        }
+
+        .page-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            color: #1b5e20;
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            line-height: 1.6;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+            .form-container h3 {
+                margin-bottom: 1.5rem;
+                color: #1b5e20;
+                font-size: 1.3rem;
+                font-weight: 600;
+            }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+                color: #1b5e20;
+                font-size: 0.9rem;
+            }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid rgba(76, 175, 80, 0.3);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+            .form-control:focus {
+                outline: none;
+                border-color: #4caf50;
+                background: white;
+                box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+            }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #2e7d32, #1b5e20);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+                color: white;
+                text-decoration: none;
+            }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .alert-danger {
+            background: rgba(244, 67, 54, 0.15);
+            color: #c62828;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .duyuru-list {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+            .duyuru-list h3 {
+                margin-bottom: 1.5rem;
+                color: #1b5e20;
+                font-size: 1.3rem;
+                font-weight: 600;
+            }
+
+        .duyuru-item {
+            border-bottom: 1px solid rgba(76, 175, 80, 0.1);
+            padding: 1.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+            .duyuru-item:last-child {
+                border-bottom: none;
+            }
+
+            .duyuru-item:hover {
+                background: rgba(76, 175, 80, 0.05);
+                border-radius: 12px;
+                padding: 1.5rem 1rem;
+            }
+
+        .duyuru-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .duyuru-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1b5e20;
+            margin: 0;
+        }
+
+        .duyuru-date {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+            background: rgba(76, 175, 80, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+        }
+
+        .duyuru-mesaj {
+            color: #555;
+            line-height: 1.6;
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .duyuru-hedef {
+            font-size: 0.8rem;
+            color: #666;
+            font-style: italic;
+            background: rgba(33, 150, 243, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @@media (max-width: 1024px) {
+            .sidebar
+
+        {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: calc(100vh - 70px);
+            width: 280px;
+            z-index: 998;
+            transform: translateX(-100%);
+            padding-top: 1rem;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 280px;
+        }
+
+        .content-wrapper {
+            margin-left: 80px !important;
+            padding: 1rem !important;
+        }
+
+        }
+
+        @@media (max-width: 768px) {
+            .header
+
+        {
+            padding: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+        }
+
+        .user-info span {
+            display: none;
+        }
+
+        .content-wrapper {
+            margin-left: 80px !important;
+            padding: 1rem;
+        }
+
+        .duyuru-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .page-header {
+            padding: 1.5rem;
+        }
+
+        }
+
+        @@media (max-width: 480px) {
+            .hamburger-menu
+
+        {
+            left: 10px;
+            top: 75px;
+        }
+
+        .content-wrapper {
+            margin-left: 70px !important;
+            padding: 0.8rem;
+        }
+
+        }
+
+        /* Animation keyframes */
+        @@keyframes pageLoad {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .layout-container {
+            animation: pageLoad 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" style="margin: 1rem 2rem;">
+            <strong>✅ Başarılı!</strong> @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" style="margin: 1rem 2rem;">
+            <strong>❌ Hata!</strong> @TempData["Error"]
+        </div>
+    }
+
+    <div class="header">
+        <h1>🌳 Eğitmen Paneli</h1>
+        <div class="user-info">
+            <div class="user-avatar">@(ViewBag.UserName?.Substring(0, 1).ToUpper() ?? "E")</div>
+            <span>@(ViewBag.UserName ?? "Eğitmen") - Eğitmen</span>
+            <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+        </div>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" onclick="toggleSidebar()">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <div class="layout-container" id="layoutContainer">
+        <aside class="sidebar" id="sidebar">
+            <ul>
+                <li><a href="@Url.Action("Index", "Egitmen")"><span>🏠</span> <span class="menu-text">Ana Sayfa</span></a></li>
+                <li><a href="@Url.Action("StajyerListesi", "Egitmen")"><span>👥</span> <span class="menu-text">Stajyer Listesi</span></a></li>
+                <li><a href="@Url.Action("BasvuruDegerlendirme", "Egitmen")"><span>📝</span> <span class="menu-text">Başvuru Değerlendirme</span></a></li>
+                <li><a href="@Url.Action("OdevAtama", "Egitmen")"><span>✨</span> <span class="menu-text">Ödev Yönetimi</span></a></li>
+                <li><a href="@Url.Action("EgitimYonetimi", "Egitmen")"><span>📆</span> <span class="menu-text">Eğitim & Toplantı Yönetimi</span></a></li>
+                <li><a href="@Url.Action("DuyuruYonetimi", "Egitmen")" class="active"><span>📭</span> <span class="menu-text">Duyuru Yönetimi</span></a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h2 class="page-title">📭 Duyuru Yönetimi</h2>
+                    <p class="page-subtitle">Stajyerlere duyuru oluştur ve yönet</p>
+                </div>
+
+                <!-- Yeni Duyuru Formu -->
+                <div class="form-container">
+                    <h3>📝 Yeni Duyuru Oluştur</h3>
+
+                    <form method="post" asp-action="DuyuruOlustur">
+                        <div class="form-group">
+                            <label for="baslik">Duyuru Başlığı *</label>
+                            <input type="text" id="baslik" name="baslik" class="form-control" placeholder="Duyuru başlığını girin..." required maxlength="200" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mesaj">Duyuru Mesajı *</label>
+                            <textarea id="mesaj" name="mesaj" class="form-control" rows="4" placeholder="Duyuru mesajını girin..." required maxlength="1000"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hedefKitle">Hedef Kitle</label>
+                            <select id="hedefKitle" name="hedefKitle" class="form-control">
+                                <option value="0">Tüm Stajyerler</option>
+                                <option value="1">Sadece Aktif Stajyerler</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">📭 Duyuru Oluştur</button>
+                    </form>
+                </div>
+
+                <!-- Mevcut Duyurular -->
+                <div class="duyuru-list">
+                    <h3>📋 Mevcut Duyurular</h3>
+
+                    @if (Model.Any())
+                    {
+                        @foreach (var duyuru in Model)
+                        {
+                            <div class="duyuru-item">
+                                <div class="duyuru-header">
+                                    <h4 class="duyuru-title">@duyuru.Baslik</h4>
+                                    <span class="duyuru-date">@duyuru.OlusturmaTarihi.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                                <p class="duyuru-mesaj">@duyuru.Mesaj</p>
+                                <div class="duyuru-hedef">
+                                    Hedef: @(duyuru.HedefKitle == DuyuruHedefKitle.TumStajyerler ? "Tüm Stajyerler" : "Aktif Stajyerler")
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <h4>Henüz duyuru yok</h4>
+                            <p>İlk duyurunuzu yukarıdaki formdan oluşturabilirsiniz.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let sidebarState = 'expanded';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSidebarClasses();
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 1024) {
+                    if (sidebarState !== 'collapsed') {
+                        sidebarState = 'collapsed';
+                        updateSidebarClasses();
+                    }
+                }
+            });
+
+            // Success mesajlarını otomatik gizle
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => {
+                        alert.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            });
+        });
+
+        function toggleSidebar() {
+            const isDesktop = window.innerWidth > 1024;
+
+            if (isDesktop) {
+                // Desktop: toggle between collapsed and expanded
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            } else {
+                // Mobile: toggle between hidden and visible
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            }
+
+            updateSidebarClasses();
+        }
+
+        function closeSidebar() {
+            if (window.innerWidth <= 1024) {
+                sidebarState = 'collapsed';
+                updateSidebarClasses();
+            }
+        }
+
+        function updateSidebarClasses() {
+            const sidebar = document.getElementById('sidebar');
+            const layoutContainer = document.getElementById('layoutContainer');
+            const hamburger = document.querySelector('.hamburger-menu');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            // Reset all classes
+            sidebar.classList.remove('active', 'collapsed');
+            layoutContainer.classList.remove('sidebar-collapsed');
+            hamburger.classList.remove('active');
+            overlay.classList.remove('active');
+
+            if (window.innerWidth <= 1024) {
+                // Mobile behavior
+                if (sidebarState === 'expanded') {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    hamburger.classList.add('active');
+                } else {
+                    sidebar.classList.add('collapsed');
+                }
+            } else {
+                // Desktop behavior
+                if (sidebarState === 'collapsed') {
+                    sidebar.classList.add('collapsed');
+                    layoutContainer.classList.add('sidebar-collapsed');
+                } else {
+                    hamburger.classList.add('active');
+                }
+            }
+        }
+
+        // Handle clicks outside sidebar on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 1024 && sidebarState === 'expanded') {
+                const sidebar = document.getElementById('sidebar');
+                const hamburger = document.querySelector('.hamburger-menu');
+
+                if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+
+        // Prevent sidebar from closing when clicking inside it
+        document.getElementById('sidebar').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+
+        // Sidebar animation
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                if (!document.querySelector('.sidebar').classList.contains('collapsed')) {
+                    this.style.transform = 'translateX(8px)';
+                }
+            });
+
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1563 @@
+﻿@using StajyerTakipSistemi.Models.ViewModels
+@model List<OdevAtamaViewModel>
+@{
+    ViewData["Title"] = "Ödev Atama";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ödev Atama</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 30%, #dee2e6 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(46, 125, 50, 0.3), rgba(27, 94, 32, 0.1));
+            border-radius: 50%;
+            animation: floatAndFade 8s ease-in-out infinite;
+        }
+
+            .particle:nth-child(1) {
+                width: 100px;
+                height: 100px;
+                left: 15%;
+                top: 20%;
+                animation-delay: 0s;
+            }
+
+            .particle:nth-child(2) {
+                width: 80px;
+                height: 80px;
+                left: 75%;
+                top: 60%;
+                animation-delay: 3s;
+            }
+
+            .particle:nth-child(3) {
+                width: 120px;
+                height: 120px;
+                left: 85%;
+                top: 10%;
+                animation-delay: 6s;
+            }
+
+        @@keyframes floatAndFade {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+        }
+
+        25% {
+            opacity: 0.4;
+            transform: translateY(-10px) scale(1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: translateY(-20px) scale(1.1);
+        }
+
+        75% {
+            opacity: 0.3;
+            transform: translateY(-15px) scale(0.9);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateY(10px) scale(0.7);
+        }
+
+        }
+
+        .header {
+            background: #2d5016;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(45, 80, 22, 0.4);
+            position: relative;
+            z-index: 999;
+            height: 70px;
+        }
+
+            .header h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+                color: white;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: white;
+            color: #2d5016;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #2d5016;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.9);
+                color: #2d5016;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
+        /* Hamburger Menu */
+        .hamburger-menu {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+        }
+
+            .hamburger-menu:hover {
+                background: rgba(255, 255, 255, 1);
+                transform: scale(1.05);
+            }
+
+        .hamburger-icon {
+            width: 24px;
+            height: 18px;
+            position: relative;
+            transition: 0.3s ease-in-out;
+        }
+
+            .hamburger-icon span {
+                display: block;
+                position: absolute;
+                height: 3px;
+                width: 100%;
+                background: #2d5016;
+                border-radius: 3px;
+                transition: 0.3s ease-in-out;
+            }
+
+                .hamburger-icon span:nth-child(1) {
+                    top: 0px;
+                }
+
+                .hamburger-icon span:nth-child(2) {
+                    top: 7px;
+                }
+
+                .hamburger-icon span:nth-child(3) {
+                    top: 14px;
+                }
+
+        /* Hamburger animasyonu */
+        .hamburger-menu.active .hamburger-icon span:nth-child(1) {
+            top: 7px;
+            transform: rotate(135deg);
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(3) {
+            top: 7px;
+            transform: rotate(-135deg);
+        }
+
+        /* Layout container */
+        .layout-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(76, 175, 80, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 998;
+            overflow-y: auto;
+            padding-top: 5rem;
+        }
+
+            /* Sidebar kapalı*/
+            .sidebar.collapsed {
+                width: 80px;
+            }
+
+                .sidebar.collapsed .menu-text {
+                    display: none;
+                }
+
+                .sidebar.collapsed a {
+                    justify-content: center;
+                    padding: 18px 12px;
+                }
+
+                    .sidebar.collapsed a span:first-child {
+                        margin: 0;
+                        font-size: 1.3rem;
+                    }
+
+            /* Sidebar menü stilleri  */
+            .sidebar ul {
+                list-style: none;
+                padding: 0 1rem;
+                margin: 0;
+            }
+
+            .sidebar li {
+                margin-bottom: 8px;
+            }
+
+            .sidebar a {
+                text-decoration: none;
+                color: #333;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 500;
+                transition: all 0.3s;
+                padding: 16px 18px;
+                border-radius: 12px;
+                white-space: nowrap;
+            }
+
+                .sidebar a:hover {
+                    color: #2e7d32;
+                    background: rgba(76, 175, 80, 0.1);
+                }
+
+            .sidebar .active {
+                color: #2e7d32 !important;
+                font-weight: 600;
+                background: rgba(76, 175, 80, 0.15);
+                border-left: 3px solid #4caf50;
+            }
+
+        /* Sidebar overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 997;
+            transition: opacity 0.3s ease;
+        }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Content padding  */
+        .content-wrapper {
+            padding: 2rem;
+            margin-left: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .layout-container:not(.sidebar-collapsed) .content-wrapper {
+            margin-left: 0;
+            padding: 2rem 2rem 2rem 1rem;
+        }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-left: 5px solid #4A5568;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            color: #4A5568;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .new-assignment-btn {
+            background: linear-gradient(135deg, #4A5568, #2D3748);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+            .new-assignment-btn:hover {
+                background: linear-gradient(135deg, #2D3748, #1A202C);
+                transform: translateY(-2px);
+                color: white;
+                text-decoration: none;
+                box-shadow: 0 4px 15px rgba(74, 85, 104, 0.4);
+            }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            transition: all 0.3s ease;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px rgba(76, 175, 80, 0.2);
+            }
+
+        .stat-number {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: bold;
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+        }
+
+        .filters-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+            .filter-group label {
+                font-weight: 500;
+                color: #1b5e20;
+                font-size: 0.9rem;
+            }
+
+            .filter-group select, .filter-group input {
+                padding: 0.5rem;
+                border: 2px solid rgba(76, 175, 80, 0.3);
+                border-radius: 12px;
+                font-size: 0.9rem;
+                transition: border-color 0.3s;
+                background: rgba(255, 255, 255, 0.8);
+            }
+
+                .filter-group select:focus, .filter-group input:focus {
+                    outline: none;
+                    border-color: #4caf50;
+                    background: white;
+                }
+
+        .assignments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .assignment-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+            .assignment-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px rgba(76, 175, 80, 0.2);
+                border-color: #4caf50;
+            }
+
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .assignment-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1b5e20;
+            margin-bottom: 0.5rem;
+        }
+
+        .assignment-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .difficulty-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .difficulty-kolay {
+            background: rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+        }
+
+        .difficulty-orta {
+            background: rgba(255, 193, 7, 0.15);
+            color: #f57c00;
+        }
+
+        .difficulty-zor {
+            background: rgba(244, 67, 54, 0.15);
+            color: #c62828;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-aktif {
+            background: rgba(33, 150, 243, 0.15);
+            color: #1976d2;
+        }
+
+        .status-suresi-doldu {
+            background: rgba(244, 67, 54, 0.15);
+            color: #c62828;
+        }
+
+        .status-yakinda-bitecek {
+            background: rgba(255, 193, 7, 0.15);
+            color: #f57c00;
+        }
+
+        .status-son-gun {
+            background: rgba(255, 152, 0, 0.15);
+            color: #ef6c00;
+        }
+
+        .status-tamamlandi {
+            background: rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+        }
+
+        .assignment-description {
+            color: #666;
+            line-height: 1.5;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .assignment-progress {
+            margin: 1.5rem 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .assigned-students {
+            margin: 1rem 0;
+        }
+
+        .students-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .students-count {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .view-students-btn {
+            background: none;
+            border: none;
+            color: #4caf50;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+            .view-students-btn:hover {
+                color: #2e7d32;
+            }
+
+        .students-avatars {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        .student-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .assignment-dates {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(76, 175, 80, 0.05);
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .date-item {
+            text-align: center;
+        }
+
+        .date-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .date-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1b5e20;
+        }
+
+        .assignment-actions {
+            display: flex;
+            gap: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .btn-detail {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+            .btn-detail:hover {
+                background: linear-gradient(135deg, #495057, #343a40);
+                color: white;
+                text-decoration: none;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+            }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #333;
+        }
+
+            .btn-edit:hover {
+                background: linear-gradient(135deg, #e0a800, #d39e00);
+                color: #333;
+                text-decoration: none;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+            }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+            .btn-delete:hover {
+                background: linear-gradient(135deg, #c82333, #bd2130);
+                color: white;
+                text-decoration: none;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+            }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .alert-danger {
+            background: rgba(244, 67, 54, 0.15);
+            color: #c62828;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        /* Students Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            min-width: 500px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .modal-title {
+            margin: 0;
+            color: #1b5e20;
+            font-size: 1.3rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+            .close-btn:hover {
+                color: #333;
+            }
+
+        .student-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+            .student-item:hover {
+                background: rgba(76, 175, 80, 0.05);
+                border-color: #4caf50;
+            }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .student-avatar-large {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .student-details h4 {
+            margin: 0 0 0.2rem 0;
+            color: #1b5e20;
+        }
+
+        .student-details span {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .completion-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .completed {
+            background: rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+        }
+
+        .pending {
+            background: rgba(255, 193, 7, 0.15);
+            color: #f57c00;
+        }
+
+        .overdue {
+            background: rgba(244, 67, 54, 0.15);
+            color: #c62828;
+        }
+
+        /* Responsive */
+        @@media (max-width: 1024px) {
+            .sidebar
+
+        {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: calc(100vh - 70px);
+            width: 280px;
+            z-index: 998;
+            transform: translateX(-100%);
+            padding-top: 1rem;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 280px;
+        }
+
+        .content-wrapper {
+            margin-left: 80px !important;
+            padding: 1rem !important;
+        }
+
+        .assignments-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        }
+
+        @@media (max-width: 768px) {
+            .header
+
+        {
+            padding: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+        }
+
+        .user-info span {
+            display: none;
+        }
+
+        .content-wrapper {
+            margin-left: 80px !important;
+            padding: 1rem;
+        }
+
+        .assignments-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .page-header {
+            padding: 1.5rem;
+        }
+
+        .modal-content {
+            min-width: 90vw;
+            margin: 1rem;
+        }
+
+        }
+
+        @@media (max-width: 480px) {
+            .hamburger-menu
+
+        {
+            left: 10px;
+            top: 75px;
+        }
+
+        .content-wrapper {
+            margin-left: 70px !important;
+            padding: 0.8rem;
+        }
+
+        .stats-row {
+            grid-template-columns: 1fr;
+        }
+
+        }
+
+        /* Animation keyframes */
+        @@keyframes pageLoad {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .layout-container {
+            animation: pageLoad 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" style="margin: 1rem 2rem;">
+            <strong>✅ Başarılı!</strong> @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" style="margin: 1rem 2rem;">
+            <strong>❌ Hata!</strong> @TempData["Error"]
+        </div>
+    }
+
+    <div class="header">
+        <h1>🌳 Eğitmen Paneli</h1>
+        <div class="user-info">
+            <div class="user-avatar">@(ViewBag.UserName?.Substring(0, 1).ToUpper() ?? "E")</div>
+            <span>@(ViewBag.UserName ?? "Eğitmen") - Eğitmen</span>
+            <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+        </div>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" onclick="toggleSidebar()">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <div class="layout-container" id="layoutContainer">
+        <aside class="sidebar" id="sidebar">
+            <ul>
+                <li><a href="@Url.Action("Index", "Egitmen")"><span>🏠</span> <span class="menu-text">Ana Sayfa</span></a></li>
+                <li><a href="@Url.Action("StajyerListesi", "Egitmen")"><span>👥</span> <span class="menu-text">Stajyer Listesi</span></a></li>
+                <li><a href="@Url.Action("BasvuruDegerlendirme", "Egitmen")"><span>📝</span> <span class="menu-text">Başvuru Değerlendirme</span></a></li>
+                <li><a href="@Url.Action("OdevAtama", "Egitmen")" class="active"><span>✨</span> <span class="menu-text">Ödev Yönetimi</span></a></li>
+                <li><a href="@Url.Action("EgitimYonetimi", "Egitmen")"><span>📆</span> <span class="menu-text">Eğitim & Toplantı Yönetimi</span></a></li>
+                <li><a href="@Url.Action("DuyuruYonetimi", "Egitmen")"><span>📭</span> <span class="menu-text">Duyuru Yönetimi</span></a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h2 class="page-title">✨ Ödev Atama & Yönetimi</h2>
+                    <a href="@Url.Action("YeniOdev", "Egitmen")" class="new-assignment-btn">
+                        🥕 Yeni Ödev Oluştur
+                    </a>
+                </div>
+
+                <!-- İstatistikler -->
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-number">@Model.Count</div>
+                        <div class="stat-label">Toplam Ödev</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">@Model.Count(o => o.Durum == "Aktif")</div>
+                        <div class="stat-label">Aktif Ödev</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">@Model.Count(o => o.Durum == "Süresi Doldu")</div>
+                        <div class="stat-label">Süresi Dolan</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">
+                            @{
+                                var toplamAtanan = Model.Sum(o => o.ToplamAtanan);
+                                var toplamTamamlanan = Model.Sum(o => o.TamamlananSayi);
+                                var tamamlanmaOrani = toplamAtanan > 0 ? (int)((double)toplamTamamlanan / toplamAtanan * 100) : 0;
+                            }
+                            @tamamlanmaOrani%
+                        </div>
+                        <div class="stat-label">Tamamlanma Oranı</div>
+                    </div>
+                </div>
+
+                <!-- Filtreler -->
+                <div class="filters-section">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label>Durum</label>
+                            <select id="durumFilter">
+                                <option value="">Tümü</option>
+                                <option value="Aktif">Aktif</option>
+                                <option value="Süresi Doldu">Süresi Dolan</option>
+                                <option value="Tamamlandı">Tamamlanan</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Zorluk Seviyesi</label>
+                            <select id="zorlukFilter">
+                                <option value="">Tümü</option>
+                                <option value="Kolay">Kolay</option>
+                                <option value="Orta">Orta</option>
+                                <option value="Zor">Zor</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Teslim Tarihi</label>
+                            <select id="tarihFilter">
+                                <option value="">Tümü</option>
+                                <option value="bu_hafta">Bu Hafta</option>
+                                <option value="gelecek_hafta">Gelecek Hafta</option>
+                                <option value="gecmis">Geçmiş</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Arama</label>
+                            <input type="text" id="aramaFilter" placeholder="Ödev adı ara...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ödev Kartları -->
+                @if (Model.Any())
+                {
+                    <div class="assignments-grid">
+                        @foreach (var odev in Model)
+                        {
+                            <div class="assignment-card" data-durum="@odev.Durum" data-zorluk="@odev.ZorlukSeviyesi" data-tarih="@odev.TeslimTarihi.ToString("yyyy-MM-dd")" data-arama="@odev.OdevAdi.ToLower()">
+                                <div class="assignment-header">
+                                    <div>
+                                        <h3 class="assignment-title">@odev.OdevAdi</h3>
+                                        <div class="assignment-meta">
+                                            <span class="difficulty-badge difficulty-@odev.ZorlukSeviyesi.ToLower()">
+                                                @odev.ZorlukSeviyesi
+                                            </span>
+                                            <span>•</span>
+                                            <span>@odev.OlusturmaTarihi.ToString("dd/MM/yyyy")</span>
+                                        </div>
+                                    </div>
+                                    <span class="status-badge status-@odev.Durum.ToLower().Replace(" ", "-")">
+                                        @(odev.Durum == "Suresi Doldu" ? "Süresi Doldu" :
+                                                                        odev.Durum == "Son Gun" ? "Son Gün" :
+                                                                        odev.Durum == "Yakinda Bitecek" ? "Yakında Bitecek" :
+                                                                        odev.Durum)
+                            </span>
+                                </div>
+
+                                <div class="assignment-description">
+                                    @odev.Aciklama
+                                </div>
+
+                                <div class="assignment-progress">
+                                    <div class="progress-label">
+                                        <span>İlerleme</span>
+                                        <span>@odev.TamamlananSayi/@odev.ToplamAtanan tamamlandı</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: @{
+                                                            var ilerlemeyuzdesi = odev.ToplamAtanan > 0 ? (int)((double)odev.TamamlananSayi / odev.ToplamAtanan * 100) : 0;
+                                                }
+                                                @@ilerlemeyuzdesi%"></div>
+                                </div>
+                            </div>
+
+                            <div class="assigned-students">
+                                <div class="students-header">
+                                    <span class="students-count">@odev.ToplamAtanan stajyere atandı</span>
+                                    <button class="view-students-btn" onclick="showStudents(@odev.Id, '@odev.OdevAdi')">
+                                        👁️ Stajyerleri Gör
+                                    </button>
+                                </div>
+                                <div class="students-avatars">
+                                    @for (int i = 0; i < Math.Min(odev.AtananStajyerAdlari.Count, 5); i++)
+                                    {
+                                        var stajyer = odev.AtananStajyerAdlari[i];
+                                        var initials = stajyer.Split(' ').Length > 1
+                                        ? stajyer.Split(' ')[0].Substring(0, 1) + stajyer.Split(' ')[1].Substring(0, 1)
+                                        : stajyer.Substring(0, Math.Min(2, stajyer.Length));
+                                        <div class="student-avatar" title="@stajyer">@initials</div>
+                                    }
+                                    @if (odev.AtananStajyerAdlari.Count > 5)
+                                    {
+                                        <div class="student-avatar" title="@(odev.AtananStajyerAdlari.Count - 5) kişi daha">+@(odev.AtananStajyerAdlari.Count - 5)</div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="assignment-dates">
+                                <div class="date-item">
+                                    <div class="date-label">Oluşturulma</div>
+                                    <div class="date-value">@odev.OlusturmaTarihi.ToString("dd/MM/yyyy")</div>
+                                </div>
+                                <div class="date-item">
+                                    <div class="date-label">Teslim Tarihi</div>
+                                    <div class="date-value">@odev.TeslimTarihi.ToString("dd/MM/yyyy")</div>
+                                </div>
+                                <div class="date-item">
+                                    <div class="date-label">Kalan Süre</div>
+                                    <div class="date-value">
+                                        @{
+                                            var kalanGun = (odev.TeslimTarihi - DateTime.Now).Days;
+                                            var kalanSure = kalanGun > 0 ? $"{kalanGun} gün" : kalanGun == 0 ? "Bugün" : "Süre doldu";
+                                        }
+                                        @kalanSure
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="assignment-actions">
+                                <a href="#" class="action-btn btn-edit" onclick="odevDuzenle(@odev.Id)">✏️ Düzenle</a>
+                                <button class="action-btn btn-delete" onclick="odevSil(@odev.Id, '@odev.OdevAdi')">🗑️ Sil</button>
+                                <a href="@Url.Action("OdevTeslimleri", "Egitmen", new { gorevId = odev.Id })"
+                                   class="action-btn btn-detail">
+                                    📋 Teslimler
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+                                }
+                                else
+                {
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <h3>Henüz ödev bulunmuyor</h3>
+                        <p>İlk ödevinizi oluşturmak için "Yeni Ödev Oluştur" butonuna tıklayın.</p>
+                    </div>
+                }
+            </div>
+        </main>
+    </div>
+
+    <!-- Stajyer Listesi Modal -->
+    <div id="studentsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Ödev Alan Stajyerler</h3>
+                <button class="close-btn" onclick="closeStudentsModal()">&times;</button>
+            </div>
+            <ul class="student-list" id="studentList">
+                <!-- JavaScript ile doldurulacak -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let sidebarState = 'expanded';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSidebarClasses();
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 1024) {
+                    if (sidebarState !== 'collapsed') {
+                        sidebarState = 'collapsed';
+                        updateSidebarClasses();
+                    }
+                }
+            });
+
+            // Sayfa yüklendiğinde success mesajlarını otomatik gizle
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => {
+                        alert.style.display = 'none';
+                    }, 300);
+                }, 5000); // 5 saniye sonra gizle
+            });
+        });
+
+        function toggleSidebar() {
+            const isDesktop = window.innerWidth > 1024;
+
+            if (isDesktop) {
+                // Desktop: toggle between collapsed and expanded
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            } else {
+                // Mobile: toggle between hidden and visible
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            }
+
+            updateSidebarClasses();
+        }
+
+        function closeSidebar() {
+            if (window.innerWidth <= 1024) {
+                sidebarState = 'collapsed';
+                updateSidebarClasses();
+            }
+        }
+
+        function updateSidebarClasses() {
+            const sidebar = document.getElementById('sidebar');
+            const layoutContainer = document.getElementById('layoutContainer');
+            const hamburger = document.querySelector('.hamburger-menu');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            // Reset all classes
+            sidebar.classList.remove('active', 'collapsed');
+            layoutContainer.classList.remove('sidebar-collapsed');
+            hamburger.classList.remove('active');
+            overlay.classList.remove('active');
+
+            if (window.innerWidth <= 1024) {
+                // Mobile behavior
+                if (sidebarState === 'expanded') {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    hamburger.classList.add('active');
+                } else {
+                    sidebar.classList.add('collapsed');
+                }
+            } else {
+                // Desktop behavior
+                if (sidebarState === 'collapsed') {
+                    sidebar.classList.add('collapsed');
+                    layoutContainer.classList.add('sidebar-collapsed');
+                } else {
+                    hamburger.classList.add('active');
+                }
+            }
+        }
+
+        // Handle clicks outside sidebar on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 1024 && sidebarState === 'expanded') {
+                const sidebar = document.getElementById('sidebar');
+                const hamburger = document.querySelector('.hamburger-menu');
+
+                if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+
+        // Prevent sidebar from closing when clicking inside it
+        document.getElementById('sidebar').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+
+        // Hover animations
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Sidebar animation
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                if (!document.querySelector('.sidebar').classList.contains('collapsed')) {
+                    this.style.transform = 'translateX(8px)';
+                }
+            });
+
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Filtreleme
+        document.getElementById('durumFilter').addEventListener('change', filterAssignments);
+        document.getElementById('zorlukFilter').addEventListener('change', filterAssignments);
+        document.getElementById('tarihFilter').addEventListener('change', filterAssignments);
+        document.getElementById('aramaFilter').addEventListener('input', filterAssignments);
+
+        function filterAssignments() {
+            const durum = document.getElementById('durumFilter').value;
+            const zorluk = document.getElementById('zorlukFilter').value;
+            const tarih = document.getElementById('tarihFilter').value;
+            const arama = document.getElementById('aramaFilter').value.toLowerCase();
+
+            const cards = document.querySelectorAll('.assignment-card');
+
+            cards.forEach(card => {
+                let show = true;
+
+                // Durum filtresi
+                if (durum && !card.dataset.durum.includes(durum)) {
+                    show = false;
+                }
+
+                // Zorluk filtresi
+                if (zorluk && card.dataset.zorluk !== zorluk) {
+                    show = false;
+                }
+
+                // Tarih filtresi
+                if (tarih) {
+                    const cardDate = new Date(card.dataset.tarih);
+                    const today = new Date();
+
+                    if (tarih === 'bu_hafta') {
+                        const weekLater = new Date(today);
+                        weekLater.setDate(weekLater.getDate() + 7);
+                        if (cardDate < today || cardDate > weekLater) {
+                            show = false;
+                        }
+                    } else if (tarih === 'gelecek_hafta') {
+                        const weekLater = new Date(today);
+                        weekLater.setDate(weekLater.getDate() + 7);
+                        const twoWeeksLater = new Date(today);
+                        twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
+                        if (cardDate < weekLater || cardDate > twoWeeksLater) {
+                            show = false;
+                        }
+                    } else if (tarih === 'gecmis') {
+                        if (cardDate >= today) {
+                            show = false;
+                        }
+                    }
+                }
+
+                // Arama filtresi
+                if (arama && !card.dataset.arama.includes(arama)) {
+                    show = false;
+                }
+
+                card.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        // Modal işlemleri
+        function showStudents(odevId, odevAdi) {
+             document.getElementById('modalTitle').textContent = odevAdi + ' - Atanan Stajyerler';
+
+             // AJAX ile gerçek stajyer listesini çek
+             fetch('@Url.Action("GetStajyerler", "Egitmen")?gorevId=' + odevId)
+                 .then(response => response.json())
+                 .then(data => {
+                     const studentList = document.getElementById('studentList');
+
+                     if (data.success && data.stajyerler.length > 0) {
+                         let html = '';
+                         data.stajyerler.forEach(stajyer => {
+                             const statusClass = stajyer.durum === 'completed' ? 'completed' : 'pending';
+                             html += `
+                                 <li class="student-item">
+                                     <div class="student-info">
+                                         <div class="student-avatar-large">${stajyer.initials}</div>
+                                         <div class="student-details">
+                                             <h4>${stajyer.adSoyad}</h4>
+                                             <span>${stajyer.pozisyon}</span>
+                                         </div>
+                                     </div>
+                                     <span class="completion-status ${statusClass}">${stajyer.durumText}</span>
+                                 </li>
+                             `;
+                         });
+                         studentList.innerHTML = html;
+                     } else {
+                         studentList.innerHTML = `
+                             <li class="student-item" style="text-align: center; padding: 2rem;">
+                                 <div style="color: #666;">
+                                     <div style="font-size: 2rem; margin-bottom: 1rem;">📝</div>
+                                     <h4>Henüz kimseye atanmadı</h4>
+                                     <p>Bu ödev henüz hiçbir stajyere atanmamış.</p>
+                                 </div>
+                             </li>
+                         `;
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Hata:', error);
+                     document.getElementById('studentList').innerHTML = `
+                         <li class="student-item" style="text-align: center; padding: 2rem;">
+                             <div style="color: #dc3545;">
+                                 <h4>❌ Hata</h4>
+                                 <p>Stajyer listesi yüklenirken hata oluştu.</p>
+                             </div>
+                         </li>
+                     `;
+                 });
+
+             document.getElementById('studentsModal').style.display = 'block';
+         }
+
+         function closeStudentsModal() {
+             document.getElementById('studentsModal').style.display = 'none';
+         }
+
+         // Modal dışına tıklayınca kapat
+         window.onclick = function(event) {
+             const modal = document.getElementById('studentsModal');
+             if (event.target === modal) {
+                 closeStudentsModal();
+             }
+         }
+
+         // Ödev buton fonksiyonları
+         function odevDuzenle(id) {
+             window.location.href = '@Url.Action("OdevDuzenle", "Egitmen")?id=' + id;
+         }
+
+         function odevSil(id, odevAdi) {
+             if (confirm('Bu ödevi ve tüm stajyer atamalarını silmek istediğinizden emin misiniz?\n\n📝 Ödev: ' + odevAdi + '\n\n⚠️ Bu işlem geri alınamaz!')) {
+                 var form = document.createElement('form');
+                 form.method = 'POST';
+                 form.action = '@Url.Action("OdevSil", "Egitmen")';
+
+                 var input = document.createElement('input');
+                 input.type = 'hidden';
+                 input.name = 'id';
+                 input.value = id;
+
+                 form.appendChild(input);
+                 document.body.appendChild(form);
+                 form.submit();
+             }
+         }
+    </script>
+</body>
+</html>

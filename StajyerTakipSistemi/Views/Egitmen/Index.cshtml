@@ -1,0 +1,948 @@
+﻿@{
+    ViewData["Title"] = "Eğitmen Dashboard";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eğitmen Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 30%, #dee2e6 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(46, 125, 50, 0.3), rgba(27, 94, 32, 0.1));
+            border-radius: 50%;
+            animation: floatAndFade 8s ease-in-out infinite;
+        }
+
+            .particle:nth-child(1) {
+                width: 100px;
+                height: 100px;
+                left: 15%;
+                top: 20%;
+                animation-delay: 0s;
+            }
+
+            .particle:nth-child(2) {
+                width: 80px;
+                height: 80px;
+                left: 75%;
+                top: 60%;
+                animation-delay: 3s;
+            }
+
+            .particle:nth-child(3) {
+                width: 120px;
+                height: 120px;
+                left: 85%;
+                top: 10%;
+                animation-delay: 6s;
+            }
+
+        @@keyframes floatAndFade {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+        }
+
+        25% {
+            opacity: 0.4;
+            transform: translateY(-10px) scale(1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: translateY(-20px) scale(1.1);
+        }
+
+        75% {
+            opacity: 0.3;
+            transform: translateY(-15px) scale(0.9);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateY(10px) scale(0.7);
+        }
+
+        }
+
+        .header {
+            background: #2d5016;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(45, 80, 22, 0.4);
+            position: relative;
+            z-index: 999;
+            height: 70px;
+        }
+
+            .header h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+                color: white;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: white;
+            color: #2d5016;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #2d5016;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.9);
+                color: #2d5016;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
+        /* Hamburger Menu */
+        .hamburger-menu {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+        }
+
+            .hamburger-menu:hover {
+                background: rgba(255, 255, 255, 1);
+                transform: scale(1.05);
+            }
+
+        .hamburger-icon {
+            width: 24px;
+            height: 18px;
+            position: relative;
+            transition: 0.3s ease-in-out;
+        }
+
+            .hamburger-icon span {
+                display: block;
+                position: absolute;
+                height: 3px;
+                width: 100%;
+                background: #2d5016;
+                border-radius: 3px;
+                transition: 0.3s ease-in-out;
+            }
+
+                .hamburger-icon span:nth-child(1) {
+                    top: 0px;
+                }
+
+                .hamburger-icon span:nth-child(2) {
+                    top: 7px;
+                }
+
+                .hamburger-icon span:nth-child(3) {
+                    top: 14px;
+                }
+
+        /* Hamburger animasyonu */
+        .hamburger-menu.active .hamburger-icon span:nth-child(1) {
+            top: 7px;
+            transform: rotate(135deg);
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(3) {
+            top: 7px;
+            transform: rotate(-135deg);
+        }
+
+        /* Layout container */
+        .layout-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(76, 175, 80, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 998;
+            overflow-y: auto;
+            padding-top: 5rem; 
+        }
+
+            /* Sidebar kapalı*/
+            .sidebar.collapsed {
+                width: 80px; 
+            }
+
+                .sidebar.collapsed .menu-text {
+                    display: none;
+                }
+
+                .sidebar.collapsed a {
+                    justify-content: center;
+                    padding: 18px 12px;
+                }
+
+                    .sidebar.collapsed a span:first-child {
+                        margin: 0;
+                        font-size: 1.3rem;
+                    }
+
+            /* Sidebar menü stilleri  */
+            .sidebar ul {
+                list-style: none;
+                padding: 0 1rem;
+                margin: 0;
+            }
+
+            .sidebar li {
+                margin-bottom: 8px; 
+            }
+
+            .sidebar a {
+                text-decoration: none;
+                color: #333;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 500;
+                transition: all 0.3s;
+                padding: 16px 18px; 
+                border-radius: 12px;
+                white-space: nowrap;
+            }
+
+                .sidebar a:hover {
+                    color: #2e7d32;
+                    background: rgba(76, 175, 80, 0.1);
+                }
+
+            .sidebar .active {
+                color: #2e7d32 !important;
+                font-weight: 600;
+                background: rgba(76, 175, 80, 0.15);
+                border-left: 3px solid #4caf50;
+            }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Content padding  */
+        .content-wrapper {
+            padding: 2rem;
+            margin-left: 80px; 
+            transition: all 0.3s ease;
+        }
+
+        
+        .layout-container:not(.sidebar-collapsed) .content-wrapper {
+            margin-left: 0;
+            padding: 2rem 2rem 2rem 1rem;
+        }
+
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-left: 5px solid #4caf50;
+        }
+
+        .welcome-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            color: #1b5e20;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            color: #666;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            line-height: 1.6;
+        }
+
+        .quick-actions {
+            display: grid;
+            gap: 1.5rem;
+            margin: 2rem 0 3rem 0;
+            transition: all 0.3s ease;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+       
+        .layout-container.sidebar-collapsed .quick-actions {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .dashboard-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .layout-container.sidebar-collapsed .dashboard-grid {
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            transition: all 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px rgba(76, 175, 80, 0.2);
+            }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .card-title {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+            color: #1b5e20;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .stat-number {
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: bold;
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+        }
+
+        .list-item {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+            .list-item:last-child {
+                border-bottom: none;
+            }
+
+        .list-item-name {
+            color: #333;
+            font-weight: 500;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .list-item-meta {
+            color: #666;
+            font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+            .btn:hover {
+                background: linear-gradient(135deg, #1b5e20 0%, #0d2818 100%);
+                color: white;
+                text-decoration: none;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+            }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+            .action-card:hover {
+                transform: translateY(-5px);
+                text-decoration: none;
+                color: white;
+            }
+
+            .action-card:nth-child(1):hover {
+                background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            }
+
+            .action-card.warning:hover {
+                background: linear-gradient(135deg, #d68910 0%, #b7950b 100%);
+            }
+
+            .action-card.secondary:hover {
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            }
+
+            .action-card.info:hover {
+                background: linear-gradient(135deg, #922b21 0%, #a93226 100%);
+            }
+
+        .action-icon {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 0.5rem;
+        }
+
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+        }
+
+        .action-desc {
+            font-size: clamp(0.7rem, 2vw, 0.85rem);
+            opacity: 0.9;
+        }
+
+        
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 997;
+            transition: opacity 0.3s ease;
+        }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+        
+        @@media (max-width: 1024px) {
+            .sidebar
+
+        {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: calc(100vh - 70px);
+            width: 280px;
+            z-index: 998;
+            transform: translateX(-100%);
+            padding-top: 1rem;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 280px;
+        }
+
+        .content-wrapper {
+            margin-left: 80px !important;
+            padding: 1rem !important;
+        }
+
+        .layout-container.sidebar-collapsed .quick-actions {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .layout-container.sidebar-collapsed .dashboard-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .layout-container:not(.sidebar-collapsed) .quick-actions {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .layout-container:not(.sidebar-collapsed) .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        }
+
+        @@media (max-width: 768px) {
+            .header
+
+        {
+            padding: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+        }
+
+        .user-info span {
+            display: none;
+        }
+
+        .content-wrapper {
+            margin-left: 80px !important;
+            padding: 1rem;
+        }
+
+        .layout-container.sidebar-collapsed .quick-actions,
+        .layout-container:not(.sidebar-collapsed) .quick-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .layout-container.sidebar-collapsed .dashboard-grid,
+        .layout-container:not(.sidebar-collapsed) .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        }
+
+        @@media (max-width: 480px) {
+            .hamburger-menu
+
+        {
+            left: 10px;
+            top: 75px;
+        }
+
+        .content-wrapper {
+            margin-left: 70px !important;
+            padding: 0.8rem;
+        }
+
+        }
+
+        /* Animation keyframes */
+        @@keyframes pageLoad {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .layout-container {
+            animation: pageLoad 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="header">
+        <h1>🌳 Eğitmen Paneli</h1>
+        <div class="user-info">
+            <div class="user-avatar">@(ViewBag.UserName?.Substring(0, 1).ToUpper() ?? "E")</div>
+            <span>@(ViewBag.UserName ?? "Eğitmen") - Eğitmen</span>
+            <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+        </div>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" onclick="toggleSidebar()">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <div class="layout-container" id="layoutContainer">
+        <aside class="sidebar" id="sidebar">
+            <ul>
+                <li><a href="@Url.Action("Index", "Egitmen")" class="active"><span>🏠</span> <span class="menu-text">Ana Sayfa</span></a></li>
+                <li><a href="@Url.Action("StajyerListesi", "Egitmen")"><span>👥</span> <span class="menu-text">Stajyer Listesi</span></a></li>
+                <li><a href="@Url.Action("BasvuruDegerlendirme", "Egitmen")"><span> 📝</span> <span class="menu-text">Başvuru Değerlendirme</span></a></li>
+                <li><a href="@Url.Action("OdevAtama", "Egitmen")"><span>✨</span> <span class="menu-text">Ödev Yönetimi</span></a></li>
+                <li><a href="@Url.Action("EgitimYonetimi", "Egitmen")"><span>📆</span> <span class="menu-text">Eğitim & Toplantı Yönetimi</span></a></li>
+                <li><a href="@Url.Action("DuyuruYonetimi", "Egitmen")"><span>📭</span> <span class="menu-text">Duyuru Yönetimi</span></a></li>
+
+            </ul>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div class="content-wrapper">
+                <div class="welcome-section">
+                    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                        <div style="font-size: clamp(2rem, 5vw, 3rem);">🦩</div>
+                        <div style="flex: 1; min-width: 250px;">
+                            <h2 class="welcome-title">Hoş geldin, @(ViewBag.UserName?.Split(' ')[0] ?? "Eğitmen")!</h2>
+                            <p class="welcome-subtitle">
+                                Stajyer yönetim paneline hoş geldin.
+                                @if ((ViewBag.BekleyenBasvurular ?? 0) > 0 || (ViewBag.AktifStajyer ?? 0) > 0)
+                                {
+                                    <span>Bugün @(ViewBag.BekleyenBasvurular ?? 0) bekleyen başvuru ve @(ViewBag.AktifStajyer ?? 0) aktif stajyer var.</span>
+                                }
+                                else
+                                {
+                                    <span>Yeni stajyer başvurularını bekliyor ve sistemi yönetmeye hazırsın.</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hızlı İşlemler -->
+                <div class="quick-actions">
+                    <a href="@Url.Action("StajyerListesi", "Egitmen")" class="action-card">
+                        <div class="action-icon">👥</div>
+                        <div class="action-title">Stajyer Listesi</div>
+                        <div class="action-desc">Tüm stajyerleri görüntüle</div>
+                    </a>
+                    <a href="@Url.Action("BasvuruDegerlendirme", "Egitmen")" class="action-card warning">
+                        <div class="action-icon">📝</div>
+                        <div class="action-title">Başvuruları İncele</div>
+                        <div class="action-desc">Bekleyen başvuruları değerlendir</div>
+                    </a>
+                    <a href="@Url.Action("OdevAtama", "Egitmen")" class="action-card secondary">
+                        <div class="action-icon">✨</div>
+                        <div class="action-title">Ödev Ata</div>
+                        <div class="action-desc">Yeni ödev oluştur</div>
+                    </a>
+                    <a href="@Url.Action("EgitimYonetimi", "Egitmen")" class="action-card info">
+                        <div class="action-icon">📆</div>
+                        <div class="action-title">Eğitim Atama</div>
+                        <div class="action-desc">Eğitim programları yönet</div>
+                    </a>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Genel İstatistikler Kartı -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🐰 Genel İstatistikler</h3>
+                        </div>
+                        <div class="stat-number">@(ViewBag.ToplamStajyer ?? 0)</div>
+                        <div class="stat-label">Toplam Stajyer</div>
+                        <hr style="margin: 1rem 0; border: none; height: 1px; background: rgba(76, 175, 80, 0.2);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                            <span style="font-size: clamp(0.8rem, 2vw, 0.9rem);">Aktif: <strong>@(ViewBag.AktifStajyer ?? 0)</strong></span>
+                            <span style="font-size: clamp(0.8rem, 2vw, 0.9rem);">Tamamlanan: <strong>@(ViewBag.TamamlananStajyer ?? 0)</strong></span>
+                        </div>
+                        <div style="font-size: clamp(0.7rem, 1.8vw, 0.8rem); color: #666; margin-top: 0.5rem;">
+                            📈 Toplam @(ViewBag.ToplamOdev ?? 0) ödev oluşturuldu
+                        </div>
+                    </div>
+
+                    <!-- Bekleyen İşler Kartı -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🐌 Bekleyen İşler</h3>
+                            <span class="card-badge badge-warning">@((ViewBag.BekleyenBasvurular ?? 0) + (ViewBag.BekleyenOdevTeslimleri ?? 0)) Bekliyor</span>
+                        </div>
+                        <div class="list-item">
+                            <div>
+                                <div class="list-item-name">Başvuru Değerlendirmesi</div>
+                                <div class="list-item-meta">@(ViewBag.BekleyenBasvurular ?? 0) yeni başvuru</div>
+                            </div>
+                        </div>
+                        <div class="list-item">
+                            <div>
+                                <div class="list-item-name">Ödev Değerlendirmesi</div>
+                                <div class="list-item-meta">@(ViewBag.BekleyenOdevTeslimleri ?? 0) teslim edildi</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aktif Stajyerler Kartı -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🐝 Stajyerler </h3>
+                            <span class="card-badge badge-success">@(ViewBag.AktifStajyer ?? 0) Aktif</span>
+                        </div>
+
+                        @if (ViewBag.SonOnaylananStajyerler != null && ((IEnumerable<dynamic>)ViewBag.SonOnaylananStajyerler).Any())
+                        {
+                            foreach (var stajyer in (IEnumerable<dynamic>)ViewBag.SonOnaylananStajyerler)
+                            {
+                                <div class="list-item">
+                                    <div>
+                                        <div class="list-item-name">@stajyer.AdSoyad</div>
+                                        <div class="list-item-meta">@(((DateTime)stajyer.OnaylanmaTarihi).ToString("dd.MM.yyyy"))</div>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="list-item">
+                                <div>
+                                    <div class="list-item-name">📋 Tüm stajyerleri görüntüle</div>
+                                    <div class="list-item-meta">Stajyer listesine git</div>
+                                </div>
+                                <a href="@Url.Action("StajyerListesi", "Egitmen")" class="btn">Listele</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="text-align: center; padding: 2rem; color: #666;">
+                                <div style="font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 0.5rem;">👥</div>
+                                <div style="font-size: clamp(0.9rem, 2.5vw, 1rem);">Henüz onaylanmış stajyer bulunmuyor</div>
+                                <div style="font-size: clamp(0.7rem, 2vw, 0.8rem); margin-top: 0.5rem;">Başvuruları değerlendirerek stajyer onaylayabilirsiniz</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let sidebarState = 'expanded'; // Başlangıçta kapalı
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSidebarClasses();
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 1024) {
+                    if (sidebarState !== 'collapsed') {
+                        sidebarState = 'collapsed';
+                        updateSidebarClasses();
+                    }
+                }
+            });
+        });
+
+        function toggleSidebar() {
+            const isDesktop = window.innerWidth > 1024;
+
+            if (isDesktop) {
+                // Desktop: toggle between collapsed and expanded
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            } else {
+                // Mobile: toggle between hidden and visible
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            }
+
+            updateSidebarClasses();
+        }
+
+        function closeSidebar() {
+            if (window.innerWidth <= 1024) {
+                sidebarState = 'collapsed';
+                updateSidebarClasses();
+            }
+        }
+
+        function updateSidebarClasses() {
+            const sidebar = document.getElementById('sidebar');
+            const layoutContainer = document.getElementById('layoutContainer');
+            const hamburger = document.querySelector('.hamburger-menu');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            // Reset all classes
+            sidebar.classList.remove('active', 'collapsed');
+            layoutContainer.classList.remove('sidebar-collapsed');
+            hamburger.classList.remove('active');
+            overlay.classList.remove('active');
+
+            if (window.innerWidth <= 1024) {
+                // Mobile behavior
+                if (sidebarState === 'expanded') {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    hamburger.classList.add('active');
+                } else {
+                    sidebar.classList.add('collapsed');
+                }
+            } else {
+                // Desktop behavior
+                if (sidebarState === 'collapsed') {
+                    sidebar.classList.add('collapsed');
+                    layoutContainer.classList.add('sidebar-collapsed');
+                } else {
+                    hamburger.classList.add('active');
+                }
+            }
+        }
+
+        // Card hover animations
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Sidebar animation
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                if (!document.querySelector('.sidebar').classList.contains('collapsed')) {
+                    this.style.transform = 'translateX(8px)';
+                }
+            });
+
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Handle clicks outside sidebar on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 1024 && sidebarState === 'expanded') {
+                const sidebar = document.getElementById('sidebar');
+                const hamburger = document.querySelector('.hamburger-menu');
+
+                if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+
+        // Prevent sidebar from closing when clicking inside it
+        document.getElementById('sidebar').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    </script>
+</body>
+</html>

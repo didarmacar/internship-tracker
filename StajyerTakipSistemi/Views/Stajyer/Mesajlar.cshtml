@@ -1,0 +1,843 @@
+﻿@{
+    ViewData["Title"] = "Mesajlar";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mesajlar & Duyurular</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8efff 30%, #d8e5ff 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(135, 206, 235, 0.3), rgba(184, 198, 219, 0.1));
+            border-radius: 50%;
+            animation: floatAndFade 8s ease-in-out infinite;
+        }
+
+            .particle:nth-child(1) {
+                width: 100px;
+                height: 100px;
+                left: 15%;
+                top: 20%;
+                animation-delay: 0s;
+            }
+
+            .particle:nth-child(2) {
+                width: 80px;
+                height: 80px;
+                left: 75%;
+                top: 60%;
+                animation-delay: 3s;
+            }
+
+            .particle:nth-child(3) {
+                width: 120px;
+                height: 120px;
+                left: 85%;
+                top: 10%;
+                animation-delay: 6s;
+            }
+
+        @@keyframes floatAndFade {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+        }
+
+        25% {
+            opacity: 0.4;
+            transform: translateY(-10px) scale(1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: translateY(-20px) scale(1.1);
+        }
+
+        75% {
+            opacity: 0.3;
+            transform: translateY(-15px) scale(0.9);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateY(10px) scale(0.7);
+        }
+
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4682b4 0%, #5a7fb8 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(70, 130, 180, 0.4);
+            position: relative;
+            z-index: 999;
+            height: 70px;
+        }
+
+            .header h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+                color: white;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #4682b4;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.9);
+                color: #4682b4;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
+        /* Hamburger Menu */
+        .hamburger-menu {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+        }
+
+            .hamburger-menu:hover {
+                background: rgba(255, 255, 255, 1);
+                transform: scale(1.05);
+            }
+
+        .hamburger-icon {
+            width: 24px;
+            height: 18px;
+            position: relative;
+            transition: 0.3s ease-in-out;
+        }
+
+            .hamburger-icon span {
+                display: block;
+                position: absolute;
+                height: 3px;
+                width: 100%;
+                background: #4682b4;
+                border-radius: 3px;
+                transition: 0.3s ease-in-out;
+            }
+
+                .hamburger-icon span:nth-child(1) {
+                    top: 0px;
+                }
+
+                .hamburger-icon span:nth-child(2) {
+                    top: 7px;
+                }
+
+                .hamburger-icon span:nth-child(3) {
+                    top: 14px;
+                }
+
+        /* Hamburger animasyonu */
+        .hamburger-menu.active .hamburger-icon span:nth-child(1) {
+            top: 7px;
+            transform: rotate(135deg);
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(3) {
+            top: 7px;
+            transform: rotate(-135deg);
+        }
+
+        /* Layout container */
+        .layout-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(70, 130, 180, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 998;
+            overflow-y: auto;
+            padding-top: 5rem;
+        }
+
+            /* Sidebar kapalı*/
+            .sidebar.collapsed {
+                width: 80px;
+            }
+
+                .sidebar.collapsed .menu-text {
+                    display: none;
+                }
+
+                .sidebar.collapsed a {
+                    justify-content: center;
+                    padding: 18px 12px;
+                }
+
+                    .sidebar.collapsed a span:first-child {
+                        margin: 0;
+                        font-size: 1.3rem;
+                    }
+
+            /* Sidebar menü stilleri  */
+            .sidebar ul {
+                list-style: none;
+                padding: 0 1rem;
+                margin: 0;
+            }
+
+            .sidebar li {
+                margin-bottom: 8px;
+            }
+
+            .sidebar a {
+                text-decoration: none;
+                color: #333;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 500;
+                transition: all 0.3s;
+                padding: 16px 18px;
+                border-radius: 12px;
+                white-space: nowrap;
+                position: relative;
+            }
+
+                .sidebar a:hover {
+                    color: #4682b4;
+                    background: rgba(70, 130, 180, 0.1);
+                }
+
+            .sidebar .active {
+                color: #4682b4 !important;
+                font-weight: 600;
+                background: rgba(70, 130, 180, 0.15);
+                border-left: 3px solid #4682b4;
+            }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Content padding  */
+        .content-wrapper {
+            padding: 2rem;
+            margin-left: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .layout-container:not(.sidebar-collapsed) .content-wrapper {
+            margin-left: 0;
+            padding: 2rem 2rem 2rem 1rem;
+        }
+
+        /* Message badge */
+        .message-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+            display: inline-block;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Sidebar overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 997;
+            transition: opacity 0.3s ease;
+        }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(70, 130, 180, 0.2);
+            border-left: 5px solid #4682b4;
+        }
+
+        .page-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            color: #4682b4;
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            line-height: 1.6;
+        }
+
+        .message-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            font-weight: 600;
+            color: #4682b4;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 1rem 0 0.5rem 0;
+            border-bottom: 2px solid rgba(70, 130, 180, 0.1);
+        }
+
+        .message-item {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 4px solid #4682b4;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 0 20px 20px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+            .message-item:hover {
+                transform: translateX(8px) translateY(-3px);
+                box-shadow: 0 15px 35px rgba(70, 130, 180, 0.2);
+            }
+
+        .message-title {
+            font-weight: 600;
+            color: #4682b4;
+            margin-bottom: 0.5rem;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-time {
+            font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+            color: #666;
+            float: right;
+            background: rgba(70, 130, 180, 0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+            margin-left: 1rem;
+        }
+
+        .message-content {
+            color: #333;
+            line-height: 1.6;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            clear: both;
+            margin-top: 0.5rem;
+        }
+
+        .message-important {
+            border-left-color: #e74c3c;
+            background: linear-gradient(135deg, rgba(255, 243, 205, 0.9) 0%, rgba(255, 234, 167, 0.9) 100%);
+        }
+
+            .message-important .message-title {
+                color: #c0392b;
+            }
+
+            .message-important .message-time {
+                background: rgba(231, 76, 60, 0.1);
+            }
+
+        .message-success {
+            border-left-color: #27ae60;
+            background: linear-gradient(135deg, rgba(212, 237, 218, 0.9) 0%, rgba(240, 249, 244, 0.9) 100%);
+        }
+
+            .message-success .message-title {
+                color: #27ae60;
+            }
+
+            .message-success .message-time {
+                background: rgba(39, 174, 96, 0.1);
+            }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(70, 130, 180, 0.2);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+             
+        
+
+        
+
+        /* Responsive */
+        @@media (max-width: 1024px) {
+            .sidebar
+
+        {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: calc(100vh - 70px);
+            width: 280px;
+            z-index: 998;
+            transform: translateX(-100%);
+            padding-top: 1rem;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 280px;
+        }
+
+        .content-wrapper {
+            margin-left: 80px !important;
+            padding: 1rem !important;
+        }
+
+        
+
+        }
+
+        @@media (max-width: 768px) {
+            .header
+
+        {
+            padding: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+        }
+
+        .user-info span {
+            display: none;
+        }
+
+        .content-wrapper {
+            margin-left: 80px !important;
+            padding: 1rem;
+        }
+
+        .message-time {
+            float: none;
+            display: block;
+            margin: 0.5rem 0;
+            width: fit-content;
+        }
+
+        .message-item {
+            padding: 1rem;
+        }
+
+        }
+
+        @@media (max-width: 480px) {
+            .hamburger-menu
+
+        {
+            left: 10px;
+            top: 75px;
+        }
+
+        .content-wrapper {
+            margin-left: 70px !important;
+            padding: 0.8rem;
+        }
+
+        }
+
+        /* Animation keyframes */
+        @@keyframes pageLoad {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .layout-container {
+            animation: pageLoad 0.8s ease-out forwards;
+        }
+
+        /* Message fade-in animation */
+        @@keyframes messageSlideIn {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        }
+
+        .message-item {
+            animation: messageSlideIn 0.5s ease-out forwards;
+        }
+
+            .message-item:nth-child(2) {
+                animation-delay: 0.1s;
+            }
+
+            .message-item:nth-child(3) {
+                animation-delay: 0.2s;
+            }
+
+            .message-item:nth-child(4) {
+                animation-delay: 0.3s;
+            }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="font-size: 1.5rem;">🌱</div>
+            <div>
+                <h1>Stajyer Paneli</h1>
+            </div>
+        </div>
+        <div class="user-info">
+            <span>@ViewBag.UserName - Stajyer</span>
+            <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+        </div>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" onclick="toggleSidebar()">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <div class="layout-container" id="layoutContainer">
+        <aside class="sidebar" id="sidebar">
+            <ul>
+                <li><a href="@Url.Action("Index", "Stajyer")"><span>🏡</span> <span class="menu-text">Ana Sayfa</span></a></li>
+                <li><a href="@Url.Action("Odevlerim", "Stajyer")"><span>✨</span> <span class="menu-text">Ödevlerim</span></a></li>
+                <li><a href="@Url.Action("Egitimler", "Stajyer")"><span>📆</span> <span class="menu-text">Eğitimler</span></a></li>
+                <li>
+                    <a href="@Url.Action("Mesajlar", "Stajyer")" class="active">
+                        <span>📭</span> <span class="menu-text">Duyurular</span>
+                        @{
+                            var okunmamisBildirimSayisi = ViewBag.OkunmamisBildirimSayisi ?? 0;
+                        }
+                        @if (okunmamisBildirimSayisi > 0)
+                        {
+                            <span class="message-badge">@okunmamisBildirimSayisi</span>
+                        }
+                    </a>
+                </li>
+                <li><a href="@Url.Action("Basvuru", "Stajyer")"><span>📝</span> <span class="menu-text">Başvuru Bilgilerim</span></a></li>
+                <li><a href="#" id="kahveKutusuLink"><span>☕</span> <span class="menu-text">Kahve Kutusu</span></a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div class="content-wrapper">
+                @{
+                    var sistemBildirimleri = ViewBag.SistemBildirimleri as List<StajyerTakipSistemi.Models.SistemBildirimi> ?? new List<StajyerTakipSistemi.Models.SistemBildirimi>();
+                    var egitmenDuyurulari = ViewBag.EgitmenDuyurulari as List<StajyerTakipSistemi.Models.EgitmenDuyurusu> ?? new List<StajyerTakipSistemi.Models.EgitmenDuyurusu>();
+                }
+                <div class="page-header">
+                    <h2 class="page-title">📭 Duyurular & Bildirimler</h2>
+                    <p class="page-subtitle">Sistem bildirimleri, eğitmen duyuruları ve önemli mesajları buradan takip edebilirsiniz</p>
+                </div>
+
+                
+                <div class="message-section">
+                    <h3 class="section-title">🔔 Sistem Bildirimleri</h3>
+
+                    @if (sistemBildirimleri.Any())
+                    {
+                        @foreach (var bildirim in sistemBildirimleri)
+                        {
+                            <div class="message-item @(bildirim.Tur == StajyerTakipSistemi.Models.BildirimTuru.OdevAtamasi ? "message-important" : "")">
+                                <div class="message-time">@bildirim.OlusturmaTarihi.ToString("dd/MM/yyyy HH:mm")</div>
+                                <div class="message-title">
+                                    @(bildirim.Tur == StajyerTakipSistemi.Models.BildirimTuru.OdevAtamasi ? "📚" : "🎓")
+                                    @bildirim.Baslik
+                                </div>
+                                <div class="message-content">@bildirim.Mesaj</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-message">
+                            <div class="empty-icon">🔔</div>
+                            <h4>Henüz sistem bildirimi yok</h4>
+                            <p>Yeni ödev veya eğitim atandığında burada göreceksiniz.</p>
+                        </div>
+                    }
+                </div>
+
+                
+
+                <div class="message-section">
+                    <h3 class="section-title">👨‍🏫 Eğitmen Duyuruları</h3>
+
+                    @if (egitmenDuyurulari.Any())
+                    {
+                        @foreach (var duyuru in egitmenDuyurulari)
+                        {
+                            <div class="message-item message-success">
+                                <div class="message-time">@duyuru.OlusturmaTarihi.ToString("dd/MM/yyyy HH:mm")</div>
+                                <div class="message-title">📢 @duyuru.Baslik</div>
+                                <div class="message-content">@duyuru.Mesaj</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-message">
+                            <div class="empty-icon">👨‍🏫</div>
+                            <h4>Henüz eğitmen duyurusu yok</h4>
+                            <p>Eğitmenleriniz duyuru yayınladığında burada göreceksiniz.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let sidebarState = 'expanded';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSidebarClasses();
+
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 1024) {
+                    if (sidebarState !== 'collapsed') {
+                        sidebarState = 'collapsed';
+                        updateSidebarClasses();
+                    }
+                }
+            });
+        });
+
+        function toggleSidebar() {
+            const isDesktop = window.innerWidth > 1024;
+
+            if (isDesktop) {
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            } else {
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            }
+
+            updateSidebarClasses();
+        }
+
+        function closeSidebar() {
+            if (window.innerWidth <= 1024) {
+                sidebarState = 'collapsed';
+                updateSidebarClasses();
+            }
+        }
+
+        function updateSidebarClasses() {
+            const sidebar = document.getElementById('sidebar');
+            const layoutContainer = document.getElementById('layoutContainer');
+            const hamburger = document.querySelector('.hamburger-menu');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            sidebar.classList.remove('active', 'collapsed');
+            layoutContainer.classList.remove('sidebar-collapsed');
+            hamburger.classList.remove('active');
+            overlay.classList.remove('active');
+
+            if (window.innerWidth <= 1024) {
+                if (sidebarState === 'expanded') {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    hamburger.classList.add('active');
+                } else {
+                    sidebar.classList.add('collapsed');
+                }
+            } else {
+                if (sidebarState === 'collapsed') {
+                    sidebar.classList.add('collapsed');
+                    layoutContainer.classList.add('sidebar-collapsed');
+                } else {
+                    hamburger.classList.add('active');
+                }
+            }
+        }
+
+        // Kahve kutusu
+        document.getElementById('kahveKutusuLink')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('☕ Kahve kutusu özelliği yakında eklenecek!');
+        });
+
+        // Message item animations
+        document.querySelectorAll('.message-item').forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Sidebar animation
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                if (!document.querySelector('.sidebar').classList.contains('collapsed')) {
+                    this.style.transform = 'translateX(8px)';
+                }
+            });
+
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Handle clicks outside sidebar on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 1024 && sidebarState === 'expanded') {
+                const sidebar = document.getElementById('sidebar');
+                const hamburger = document.querySelector('.hamburger-menu');
+
+                if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+
+        document.getElementById('sidebar').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+
+        console.log('📭 Duyurular sayfası yüklendi');
+    </script>
+</body>
+</html>

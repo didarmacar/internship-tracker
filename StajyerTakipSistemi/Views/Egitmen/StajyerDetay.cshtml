@@ -1,0 +1,592 @@
+﻿@using StajyerTakipSistemi.Models.ViewModels
+@model StajyerDetayViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stajyer Detayları</title>
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-header {
+            background: #2d5016;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(45, 80, 22, 0.4);
+            margin: 0;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+            .header-left h1 {
+                font-size: 1.8rem;
+                font-weight: 600;
+                margin: 0;
+                color: white;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: white;
+            color: #2d5016;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #2d5016;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.9);
+                color: #2d5016;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem 2rem 2rem;
+            margin-top: 30px; /* Header yüksekliği için boşluk */
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #2d5016;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+            .back-button:hover {
+                background: #2d5016;
+                color: white;
+                text-decoration: none;
+            }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-left: 5px solid #4caf50;
+            height: fit-content;
+        }
+
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 auto 1.5rem auto;
+            overflow: hidden;
+        }
+
+            .profile-photo img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .profile-name {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1b5e20;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            text-align: center;
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            background: rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+
+        .progress-section {
+            background: rgba(76, 175, 80, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            color: #1b5e20;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+            border-radius: 6px;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .content-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1b5e20;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid rgba(76, 175, 80, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #1b5e20;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .internship-type {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .type-zorunlu {
+            background: rgba(244, 67, 54, 0.15);
+            color: #c62828;
+        }
+
+        .type-gonullu {
+            background: rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+        }
+
+        .documents-section {
+            background: rgba(76, 175, 80, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 1rem;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .documents-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2e7d32;
+            margin-bottom: 1.5rem;
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .document-card {
+            background: white;
+            border: 2px solid rgba(76, 175, 80, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .document-card:hover {
+                border-color: #4caf50;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+            }
+
+        .doc-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #4caf50;
+        }
+
+        .doc-name {
+            font-weight: 600;
+            color: #1b5e20;
+            margin-bottom: 0.3rem;
+        }
+
+        .doc-info {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .no-document {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+            .no-document:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .detail-grid
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .documents-grid {
+            grid-template-columns: 1fr;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="main-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div style="font-size: 2rem;">👤</div>
+                <h1>Stajyer Detayları</h1>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">EH</div>
+                <span>@(ViewBag.UserName ?? "Test Eğitmen") - Eğitmen</span>
+                <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="@Url.Action("StajyerListesi", "Egitmen")" class="back-button">
+            ← Stajyer Listesine Dön
+        </a>
+
+        <div class="detail-grid">
+            <div class="profile-section">
+                <div class="profile-photo">
+                    @if (!string.IsNullOrEmpty(Model.FotografDosyaYolu))
+                    {
+                        <img src="@Model.FotografDosyaYolu" alt="@Model.AdSoyad" />
+                    }
+                    else
+                    {
+                        @Html.Raw(GetUserInitials(Model.AdSoyad))
+                    }
+                </div>
+                <div class="profile-name">@Model.AdSoyad</div>
+                <div class="profile-email">@Model.Email</div>
+
+                <div class="status-badge">
+                    ✅ @Model.BasvuruDurumu
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-label">Staj İlerlemesi</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: @Model.IlerlemeYuzdesi%"></div>
+                    </div>
+                    <div class="progress-text">@Model.IlerlemeYuzdesi% Tamamlandı</div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <!-- Kişisel Bilgiler -->
+                <div class="info-card">
+                    <h3 class="card-title">👤 Kişisel Bilgiler</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Ad Soyad</div>
+                            <div class="info-value">@Model.AdSoyad</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">E-mail</div>
+                            <div class="info-value">@Model.Email</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Telefon</div>
+                            <div class="info-value">@Model.Telefon</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Başvuru Tarihi</div>
+                            <div class="info-value">@Model.BasvuruTarihi.ToString("dd/MM/yyyy")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Okul Bilgileri -->
+                <div class="info-card">
+                    <h3 class="card-title">🎓 Okul Bilgileri</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Okul Adı</div>
+                            <div class="info-value">@Model.OkulAdi</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Bölüm</div>
+                            <div class="info-value">@Model.Bolum</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Sınıf</div>
+                            <div class="info-value">@Model.Sinif. Sınıf</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Staj Türü</div>
+                            <div class="info-value">
+                                <span class="internship-type @(Model.StajTuru.Contains("Zorunlu") ? "type-zorunlu" : "type-gonullu")">
+                                    @Model.StajTuru
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staj Bilgileri -->
+                <div class="info-card">
+                    <h3 class="card-title">📅 Staj Detayları</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Başlangıç Tarihi</div>
+                            <div class="info-value">@Model.StajBaslangicTarihi.ToString("dd/MM/yyyy")</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Bitiş Tarihi</div>
+                            <div class="info-value">@Model.StajBitisTarihi.ToString("dd/MM/yyyy")</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Süre</div>
+                            <div class="info-value">
+                                @((Model.StajBitisTarihi - Model.StajBaslangicTarihi).Days) gün
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Durum</div>
+                            <div class="info-value">
+                                @Html.Raw(GetStajDurumu(Model.StajBaslangicTarihi, Model.StajBitisTarihi))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Belgeler -->
+                <div class="documents-section">
+                    <h3 class="documents-title">📄 Yüklenen Belgeler</h3>
+                    <div class="documents-grid">
+                        <!-- CV Dosyası -->
+                        <div class="document-card @(string.IsNullOrEmpty(Model.CVDosyaYolu) ? "no-document" : "")"
+                             onclick="@(string.IsNullOrEmpty(Model.CVDosyaYolu) ? "" : "downloadCV()")">
+                            <div class="doc-icon">📄</div>
+                            <div class="doc-name">CV Dosyası</div>
+                            <div class="doc-info">
+                                @if (!string.IsNullOrEmpty(Model.CVDosyaYolu))
+                                {
+                                    <span>Yüklendi ✓</span>
+                                }
+                                else
+                                {
+                                    <span>Yüklenmedi ✗</span>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Fotoğraf -->
+                        <div class="document-card @(string.IsNullOrEmpty(Model.FotografDosyaYolu) ? "no-document" : "")"
+                             onclick="@(string.IsNullOrEmpty(Model.FotografDosyaYolu) ? "" : "downloadPhoto()")">
+                            <div class="doc-icon">🖼️</div>
+                            <div class="doc-name">Fotoğraf</div>
+                            <div class="doc-info">
+                                @if (!string.IsNullOrEmpty(Model.FotografDosyaYolu))
+                                {
+                                    <span>Yüklendi ✓</span>
+                                }
+                                else
+                                {
+                                    <span>Yüklenmedi ✗</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function downloadCV() {
+            var cvPath = '@Html.Raw(Model.CVDosyaYolu)';
+            if (cvPath) {
+                window.open(cvPath, '_blank');
+            }
+        }
+
+        function downloadPhoto() {
+            var photoPath = '@Html.Raw(Model.FotografDosyaYolu)';
+            if (photoPath) {
+                window.open(photoPath, '_blank');
+            }
+        }
+    </script>
+</body>
+</html>
+
+@functions {
+    public string GetUserInitials(string adSoyad)
+    {
+        if (string.IsNullOrEmpty(adSoyad)) return "ST";
+
+        var parts = adSoyad.Split(' ');
+        if (parts.Length >= 2)
+        {
+            return (parts[0][0].ToString() + parts[1][0].ToString()).ToUpper();
+        }
+        return adSoyad.Substring(0, Math.Min(2, adSoyad.Length)).ToUpper();
+    }
+
+    public string GetStajDurumu(DateTime baslangic, DateTime bitis)
+    {
+        var now = DateTime.Now.Date;
+        string durum, durumClass;
+
+        if (now < baslangic.Date)
+        {
+            durum = "Başlamamış";
+            durumClass = "background: rgba(255, 193, 7, 0.15); color: #f57c00;";
+        }
+        else if (now > bitis.Date)
+        {
+            durum = "Tamamlandı";
+            durumClass = "background: rgba(76, 175, 80, 0.15); color: #2e7d32;";
+        }
+        else
+        {
+            durum = "Devam Ediyor";
+            durumClass = "background: rgba(33, 150, 243, 0.15); color: #1976d2;";
+        }
+
+        return $"<span style=\"{durumClass} padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem;\">{durum}</span>";
+    }
+}

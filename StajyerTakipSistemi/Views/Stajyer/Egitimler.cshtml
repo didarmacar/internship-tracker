@@ -1,0 +1,1296 @@
+﻿@model List<StajyerTakipSistemi.Models.EgitimKatilimi>
+@{
+    ViewData["Title"] = "Eğitimlerim";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eğitimlerim</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8efff 30%, #d8e5ff 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(135, 206, 235, 0.3), rgba(184, 198, 219, 0.1));
+            border-radius: 50%;
+            animation: floatAndFade 8s ease-in-out infinite;
+        }
+
+            .particle:nth-child(1) {
+                width: 100px;
+                height: 100px;
+                left: 15%;
+                top: 20%;
+                animation-delay: 0s;
+            }
+
+            .particle:nth-child(2) {
+                width: 80px;
+                height: 80px;
+                left: 75%;
+                top: 60%;
+                animation-delay: 3s;
+            }
+
+            .particle:nth-child(3) {
+                width: 120px;
+                height: 120px;
+                left: 85%;
+                top: 10%;
+                animation-delay: 6s;
+            }
+
+        @@keyframes floatAndFade {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+        }
+
+        25% {
+            opacity: 0.4;
+            transform: translateY(-10px) scale(1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: translateY(-20px) scale(1.1);
+        }
+
+        75% {
+            opacity: 0.3;
+            transform: translateY(-15px) scale(0.9);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateY(10px) scale(0.7);
+        }
+
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4682b4 0%, #5a7fb8 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(70, 130, 180, 0.4);
+            position: relative;
+            z-index: 999;
+            height: 70px;
+        }
+
+            .header h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+                color: white;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: white;
+            color: #4682b4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #4682b4;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.9);
+                color: #4682b4;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
+        /* Hamburger Menu */
+        .hamburger-menu {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+        }
+
+            .hamburger-menu:hover {
+                background: rgba(255, 255, 255, 1);
+                transform: scale(1.05);
+            }
+
+        .hamburger-icon {
+            width: 24px;
+            height: 18px;
+            position: relative;
+            transition: 0.3s ease-in-out;
+        }
+
+            .hamburger-icon span {
+                display: block;
+                position: absolute;
+                height: 3px;
+                width: 100%;
+                background: #4682b4;
+                border-radius: 3px;
+                transition: 0.3s ease-in-out;
+            }
+
+                .hamburger-icon span:nth-child(1) {
+                    top: 0px;
+                }
+
+                .hamburger-icon span:nth-child(2) {
+                    top: 7px;
+                }
+
+                .hamburger-icon span:nth-child(3) {
+                    top: 14px;
+                }
+
+        /* Hamburger animasyonu */
+        .hamburger-menu.active .hamburger-icon span:nth-child(1) {
+            top: 7px;
+            transform: rotate(135deg);
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(3) {
+            top: 7px;
+            transform: rotate(-135deg);
+        }
+
+        /* Layout container */
+        .layout-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(70, 130, 180, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 998;
+            overflow-y: auto;
+            padding-top: 5rem;
+        }
+
+            /* Sidebar kapalı*/
+            .sidebar.collapsed {
+                width: 80px;
+            }
+
+                .sidebar.collapsed .menu-text {
+                    display: none;
+                }
+
+                .sidebar.collapsed a {
+                    justify-content: center;
+                    padding: 18px 12px;
+                }
+
+                    .sidebar.collapsed a span:first-child {
+                        margin: 0;
+                        font-size: 1.3rem;
+                    }
+
+            /* Sidebar menü stilleri  */
+            .sidebar ul {
+                list-style: none;
+                padding: 0 1rem;
+                margin: 0;
+            }
+
+            .sidebar li {
+                margin-bottom: 8px;
+            }
+
+            .sidebar a {
+                text-decoration: none;
+                color: #333;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 500;
+                transition: all 0.3s;
+                padding: 16px 18px;
+                border-radius: 12px;
+                white-space: nowrap;
+                position: relative;
+            }
+
+                .sidebar a:hover {
+                    color: #4682b4;
+                    background: rgba(70, 130, 180, 0.1);
+                }
+
+            .sidebar .active {
+                color: #4682b4 !important;
+                font-weight: 600;
+                background: rgba(70, 130, 180, 0.15);
+                border-left: 3px solid #4682b4;
+            }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Content padding  */
+        .content-wrapper {
+            padding: 2rem;
+            margin-left: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .layout-container:not(.sidebar-collapsed) .content-wrapper {
+            margin-left: 0;
+            padding: 2rem 2rem 2rem 1rem;
+        }
+
+        /* Message badge */
+        .message-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+            display: inline-block;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Sidebar overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 997;
+            transition: opacity 0.3s ease;
+        }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(70, 130, 180, 0.2);
+            border-left: 5px solid #4682b4;
+        }
+
+        .page-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            color: #4682b4;
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(70, 130, 180, 0.2);
+            transition: all 0.3s ease;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 35px rgba(70, 130, 180, 0.2);
+            }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .stat-primary {
+            color: #4682b4;
+        }
+
+        .stat-warning {
+            color: #ffc107;
+        }
+
+        .stat-danger {
+            color: #dc3545;
+        }
+
+        .stat-success {
+            color: #28a745;
+        }
+
+        .odev-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .odev-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(70, 130, 180, 0.2);
+            transition: all 0.3s ease;
+        }
+
+            .odev-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px rgba(70, 130, 180, 0.2);
+                border-color: #4682b4;
+            }
+
+        .odev-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(70, 130, 180, 0.1);
+        }
+
+        .odev-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4682b4;
+            margin-bottom: 0.5rem;
+        }
+
+        .odev-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .difficulty-kolay {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty-orta {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty-zor {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .text-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .text-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .text-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .odev-description {
+            color: #666;
+            line-height: 1.5;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .odev-dates {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(70, 130, 180, 0.05);
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .date-item {
+            text-align: center;
+        }
+
+        .date-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .date-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .odev-actions {
+            display: flex;
+            gap: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(70, 130, 180, 0.1);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+            .btn-success:hover {
+                background: #218838;
+                color: white;
+                text-decoration: none;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background: #c82333;
+                color: white;
+                text-decoration: none;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+            }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background: #5a6268;
+                color: white;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
+        .teslim-section {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .teslim-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .teslim-dosya {
+            font-weight: 500;
+            color: #856404;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(70, 130, 180, 0.2);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-success {
+            background: rgba(212, 237, 218, 0.9);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: rgba(248, 215, 218, 0.9);
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            min-width: 400px;
+            max-width: 80%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            margin: 0;
+            color: #4682b4;
+            font-size: 1.2rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+            .close-btn:hover {
+                background: #f8f9fa;
+                color: #333;
+            }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+                color: #333;
+            }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+            .form-control:focus {
+                outline: none;
+                border-color: #4682b4;
+                box-shadow: 0 0 0 3px rgba(70, 130, 180, 0.1);
+            }
+
+        .katilim-result {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .katilim-success {
+            background: rgba(212, 237, 218, 0.9);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .katilim-danger {
+            background: rgba(248, 215, 218, 0.9);
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Responsive */
+        @@media (max-width: 1024px) {
+            .sidebar
+
+        {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: calc(100vh - 70px);
+            width: 280px;
+            z-index: 998;
+            transform: translateX(-100%);
+            padding-top: 1rem;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 280px;
+        }
+
+        .content-wrapper {
+            margin-left: 80px !important;
+            padding: 1rem !important;
+        }
+
+        .odev-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        }
+
+        @@media (max-width: 768px) {
+            .header
+
+        {
+            padding: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+        }
+
+        .user-info span {
+            display: none;
+        }
+
+        .content-wrapper {
+            margin-left: 80px !important;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            min-width: 90%;
+        }
+
+        .odev-dates {
+            grid-template-columns: 1fr;
+        }
+
+        .odev-actions {
+            flex-direction: column;
+        }
+
+        }
+
+        @@media (max-width: 480px) {
+            .hamburger-menu
+
+        {
+            left: 10px;
+            top: 75px;
+        }
+
+        .content-wrapper {
+            margin-left: 70px !important;
+            padding: 0.8rem;
+        }
+
+        }
+
+        /* Animation keyframes */
+        @@keyframes pageLoad {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .layout-container {
+            animation: pageLoad 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="font-size: 1.5rem;">🌱</div>
+            <div>
+                <h1>Stajyer Paneli</h1>
+            </div>
+        </div>
+        <div class="user-info">
+            <div class="user-avatar">@(ViewBag.UserName?.Split(' ')[0]?.Substring(0, 1) ?? "S")@(ViewBag.UserName?.Split(' ').Length > 1 ? ViewBag.UserName.Split(' ')[1].Substring(0, 1) : "T")</div>
+            <span>@(ViewBag.UserName ?? "Kullanıcı") - Stajyer</span>
+            <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+        </div>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" onclick="toggleSidebar()">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <div class="layout-container" id="layoutContainer">
+        <aside class="sidebar" id="sidebar">
+            <ul>
+                <li><a href="@Url.Action("Index", "Stajyer")"><span>🏡</span> <span class="menu-text">Ana Sayfa</span></a></li>
+                <li><a href="@Url.Action("Odevlerim", "Stajyer")"><span>✨</span> <span class="menu-text">Ödevlerim</span></a></li>
+                <li><a href="@Url.Action("Egitimler", "Stajyer")" class="active"><span>📆</span> <span class="menu-text">Eğitimler</span></a></li>
+                <li>
+                    <a href="@Url.Action("Mesajlar", "Stajyer")">
+                        <span>📭</span> <span class="menu-text">Duyurular</span>
+                        @{
+                            var okunmamisBildirimSayisi = ViewBag.OkunmamisBildirimSayisi ?? 0;
+                        }
+                        @if (okunmamisBildirimSayisi > 0)
+                        {
+                            <span class="message-badge">@okunmamisBildirimSayisi</span>
+                        }
+                    </a>
+                </li>
+                <li><a href="@Url.Action("Basvuru", "Stajyer")"><span>📝</span> <span class="menu-text">Başvuru Bilgilerim</span></a></li>
+                <li><a href="#" id="kahveKutusuLink"><span>☕</span> <span class="menu-text">Kahve Kutusu</span></a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h2 class="page-title">📆 Eğitimlerim</h2>
+                    <p class="page-subtitle">Atanan eğitimleri görüntüle ve katılım durumunu belirt</p>
+                </div>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">
+                        <strong>✅ Başarılı!</strong> @TempData["Success"]
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger">
+                        <strong>❌ Hata!</strong> @TempData["Error"]
+                    </div>
+                }
+
+                <!-- İstatistikler -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number stat-success">@Model.Count(e => e.KatildiMi == true)</div>
+                        <div class="stat-label">Toplam Eğitim</div>
+                    </div>
+                </div>
+
+                <!-- Eğitim Kartları -->
+                @if (Model.Any())
+                {
+                    <div class="odev-grid">
+                        @foreach (var katilim in Model)
+                        {
+                            var egitim = katilim.Egitim;
+                            var gecmisEgitim = egitim.Tarih < DateTime.Now;
+                            var bugunEgitim = egitim.Tarih.Date == DateTime.Today;
+
+                            <div class="odev-card">
+                                <div class="odev-header">
+                                    <div>
+                                        <h3 class="odev-title">@egitim.EgitimAdi</h3>
+                                        <div class="odev-meta">
+                                            <span class="difficulty-badge @(gecmisEgitim ? "difficulty-kolay" : bugunEgitim ? "difficulty-orta" : "difficulty-zor")">
+                                                @(gecmisEgitim ? "Geçmiş" : bugunEgitim ? "Bugün" : "Gelecek")
+                                            </span>
+                                            <span>•</span>
+                                            <span>📅 @egitim.Tarih.ToString("dd/MM/yyyy")</span>
+                                            <span>•</span>
+                                            <span>🕐 @egitim.Saat.ToString(@"hh\:mm")</span>
+                                        </div>
+                                    </div>
+                                    <span class="status-badge @(katilim.KatildiMi == true ? "text-success" : katilim.KatildiMi == false ? "text-danger" : "text-info")">
+                                        @if (katilim.KatildiMi == true)
+                                        {
+                                            <span>✅ Katıldım</span>
+                                        }
+                                        else if (katilim.KatildiMi == false)
+                                        {
+                                            <span>❌ Katılamadım</span>
+                                        }
+                                        else
+                                        {
+                                            <span>⏳ Karar Bekliyor</span>
+                                        }
+                                    </span>
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(egitim.Aciklama))
+                                {
+                                    <div class="odev-description">@egitim.Aciklama</div>
+                                }
+
+                                <div class="odev-dates">
+                                    <div class="date-item">
+                                        <div class="date-label">Eğitim Tarihi</div>
+                                        <div class="date-value">@egitim.Tarih.ToString("dd/MM/yyyy")</div>
+                                    </div>
+                                    <div class="date-item">
+                                        <div class="date-label">Saat</div>
+                                        <div class="date-value">@egitim.Saat.ToString(@"hh\:mm")</div>
+                                    </div>
+                                    <div class="date-item">
+                                        <div class="date-label">Atanma Tarihi</div>
+                                        <div class="date-value">@katilim.AtamaTarihi.ToString("dd/MM/yyyy")</div>
+                                    </div>
+                                </div>
+
+                                <!-- Katılamama nedeni gösterimi -->
+                                @if (katilim.KatildiMi == false && !string.IsNullOrEmpty(katilim.KatilmamaNedeni))
+                                {
+                                    <div class="teslim-section">
+                                        <div class="teslim-info">
+                                            <div class="teslim-dosya">📝 Katılamama Nedeni:</div>
+                                        </div>
+                                        <div style="margin-top: 0.5rem; font-style: italic; color: #856404;">
+                                            "@katilim.KatilmamaNedeni"
+                                        </div>
+                                    </div>
+                                }
+
+                                <!-- Aksiyon Butonları -->
+                                @if (katilim.KatildiMi == null)
+                                {
+                                    <div class="odev-actions">
+                                        <form method="post" asp-action="EgitimaKatildim" style="display: inline;">
+                                            <input type="hidden" name="katilimId" value="@katilim.Id" />
+                                            <button type="submit" class="btn btn-success">✅ Katıldım</button>
+                                        </form>
+                                        <button class="btn btn-danger" onclick="openKatilamadimModal(@katilim.Id, '@egitim.EgitimAdi')">
+                                            ❌ Katılamadım
+                                        </button>
+                                    </div>
+                                }
+                                else if (katilim.KatildiMi == true)
+                                {
+                                    <div class="katilim-result katilim-success">
+                                        ✅ Bu eğitime katıldığınızı belirttiniz
+                                        @if (katilim.KatilimTarihi.HasValue)
+                                        {
+                                            <div style="font-size: 0.8rem; margin-top: 0.3rem;">
+                                                (@katilim.KatilimTarihi.Value.ToString("dd/MM/yyyy HH:mm")'de belirtildi)
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else if (katilim.KatildiMi == false)
+                                {
+                                    <div class="katilim-result katilim-danger">
+                                        ❌ Bu eğitime katılamadığınızı belirttiniz
+                                        @if (katilim.KatilimTarihi.HasValue)
+                                        {
+                                            <div style="font-size: 0.8rem; margin-top: 0.3rem;">
+                                                (@katilim.KatilimTarihi.Value.ToString("dd/MM/yyyy HH:mm")'de belirtildi)
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎓</div>
+                        <h3>Henüz eğitim bulunmuyor</h3>
+                        <p>Size atanan eğitimler burada görünecek.</p>
+                        <div style="margin-top: 2rem; font-size: 0.9rem; color: #999;">
+                            Eğitmenleriniz size eğitim atadığında bu sayfada görebileceksiniz.
+                        </div>
+                    </div>
+                }
+            </div>
+        </main>
+    </div>
+
+    <!-- Katılamadım Modal -->
+    <div id="katilamadimModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Eğitime Katılamama</h3>
+                <button class="close-btn" onclick="closeKatilamadimModal()">&times;</button>
+            </div>
+            <form method="post" asp-action="EgitimaKatilamadim">
+                <input type="hidden" id="katilimId" name="katilimId" />
+
+                <div class="form-group">
+                    <label>Katılamama Nedeni</label>
+                    <textarea name="neden" class="form-control" rows="3" placeholder="Neden bu eğitime katılamadınız? (İsteğe bağlı)"></textarea>
+                    <small style="color: #666; font-size: 0.8rem;">
+                        💡 Neden belirtmek zorunlu değildir, ancak eğitmenlerinizin durumunuzu daha iyi anlamasına yardımcı olur.
+                    </small>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeKatilamadimModal()">🔙 İptal</button>
+                    <button type="submit" class="btn btn-danger">❌ Katılamadığımı Belirt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let sidebarState = 'expanded';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSidebarClasses();
+
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 1024) {
+                    if (sidebarState !== 'collapsed') {
+                        sidebarState = 'collapsed';
+                        updateSidebarClasses();
+                    }
+                }
+            });
+        });
+
+        function toggleSidebar() {
+            const isDesktop = window.innerWidth > 1024;
+
+            if (isDesktop) {
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            } else {
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            }
+
+            updateSidebarClasses();
+        }
+
+        function closeSidebar() {
+            if (window.innerWidth <= 1024) {
+                sidebarState = 'collapsed';
+                updateSidebarClasses();
+            }
+        }
+
+        function updateSidebarClasses() {
+            const sidebar = document.getElementById('sidebar');
+            const layoutContainer = document.getElementById('layoutContainer');
+            const hamburger = document.querySelector('.hamburger-menu');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            sidebar.classList.remove('active', 'collapsed');
+            layoutContainer.classList.remove('sidebar-collapsed');
+            hamburger.classList.remove('active');
+            overlay.classList.remove('active');
+
+            if (window.innerWidth <= 1024) {
+                if (sidebarState === 'expanded') {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    hamburger.classList.add('active');
+                } else {
+                    sidebar.classList.add('collapsed');
+                }
+            } else {
+                if (sidebarState === 'collapsed') {
+                    sidebar.classList.add('collapsed');
+                    layoutContainer.classList.add('sidebar-collapsed');
+                } else {
+                    hamburger.classList.add('active');
+                }
+            }
+        }
+
+        function openKatilamadimModal(katilimId, egitimAdi) {
+            document.getElementById('katilimId').value = katilimId;
+            document.getElementById('modalTitle').textContent = egitimAdi + ' - Katılamama Bildirimi';
+            document.getElementById('katilamadimModal').style.display = 'block';
+        }
+
+        function closeKatilamadimModal() {
+            document.getElementById('katilamadimModal').style.display = 'none';
+            document.querySelector('#katilamadimModal textarea').value = '';
+        }
+
+        // Modal dışına tıklayınca kapat
+        window.onclick = function(event) {
+            const modal = document.getElementById('katilamadimModal');
+            if (event.target === modal) {
+                closeKatilamadimModal();
+            }
+        }
+
+        // Kahve kutusu
+        document.getElementById('kahveKutusuLink')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('☕ Kahve kutusu özelliği yakında eklenecek!');
+        });
+
+        // Success/Error mesajlarını otomatik gizle
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => {
+                        alert.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            });
+
+            const katilimForm = document.querySelector('form[action*="EgitimaKatilamadim"]');
+            if (katilimForm) {
+                katilimForm.addEventListener('submit', function(e) {
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '⏳ Kaydediliyor...';
+                });
+            }
+
+            console.log('🎓 Eğitimler sayfası yüklendi');
+            console.log('📊 Toplam eğitim sayısı: @Model.Count');
+        });
+
+        // Card hover animations
+        document.querySelectorAll('.odev-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Sidebar animation
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                if (!document.querySelector('.sidebar').classList.contains('collapsed')) {
+                    this.style.transform = 'translateX(8px)';
+                }
+            });
+
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Handle clicks outside sidebar on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 1024 && sidebarState === 'expanded') {
+                const sidebar = document.getElementById('sidebar');
+                const hamburger = document.querySelector('.hamburger-menu');
+
+                if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+
+        document.getElementById('sidebar').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    </script>
+</body>
+</html>">Katıldığım</div>
+</div>
+<div class="stat-card">
+    <div class="stat-number stat-danger">@Model.Count(e => e.KatildiMi == false)</div>
+    <div class="stat-label">Katılamadığım</div>
+</div>
+<div class="stat-card">
+    <div class="stat-number stat-warning">@Model.Count(e => e.KatildiMi == null)</div>
+    <div class="stat-label">Karar Bekleyen</div>
+</div>
+<div class="stat-card">
+    <div class="stat-number stat-primary">@Model.Count</div>
+    <div class=" stat-label

@@ -1,0 +1,648 @@
+﻿@model List<StajyerTakipSistemi.Models.OdevTeslim>
+@{
+    ViewData["Title"] = "Ödev Teslimleri";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ödev Teslimleri</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 30%, #dee2e6 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(46, 125, 50, 0.3), rgba(27, 94, 32, 0.1));
+            border-radius: 50%;
+            animation: floatAndFade 8s ease-in-out infinite;
+        }
+
+            .particle:nth-child(1) {
+                width: 100px;
+                height: 100px;
+                left: 15%;
+                top: 20%;
+                animation-delay: 0s;
+            }
+
+            .particle:nth-child(2) {
+                width: 80px;
+                height: 80px;
+                left: 75%;
+                top: 60%;
+                animation-delay: 3s;
+            }
+
+            .particle:nth-child(3) {
+                width: 120px;
+                height: 120px;
+                left: 85%;
+                top: 10%;
+                animation-delay: 6s;
+            }
+
+        @@keyframes floatAndFade {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+        }
+
+        25% {
+            opacity: 0.4;
+            transform: translateY(-10px) scale(1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: translateY(-20px) scale(1.1);
+        }
+
+        75% {
+            opacity: 0.3;
+            transform: translateY(-15px) scale(0.9);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateY(10px) scale(0.7);
+        }
+
+        }
+
+        .header {
+            background: #2d5016;
+            color: white;
+            padding: 2rem;
+            position: relative;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(45, 80, 22, 0.4);
+        }
+
+            .header h1 {
+                font-size: clamp(1.5rem, 4vw, 2.2rem);
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: white;
+            }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+            .back-btn:hover {
+                background: rgba(255, 255, 255, 0.3);
+                color: white;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .teslim-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-left: 5px solid #4caf50;
+            transition: all 0.3s ease;
+        }
+
+            .teslim-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 40px rgba(76, 175, 80, 0.2);
+            }
+
+        .teslim-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stajyer-info {
+            flex: 1;
+        }
+
+        .stajyer-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1b5e20;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .teslim-date {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(76, 175, 80, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-beklemede {
+            background: rgba(255, 193, 7, 0.15);
+            color: #f57c00;
+            border: 2px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .status-onaylandi {
+            background: rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+            border: 2px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .status-reddedildi {
+            background: rgba(244, 67, 54, 0.15);
+            color: #c62828;
+            border: 2px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .teslim-content {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: rgba(76, 175, 80, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid #4caf50;
+        }
+
+            .teslim-content p {
+                margin-bottom: 0.8rem;
+                line-height: 1.6;
+            }
+
+                .teslim-content p:last-child {
+                    margin-bottom: 0;
+                }
+
+            .teslim-content strong {
+                color: #1b5e20;
+            }
+
+        .teslim-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #1976d2, #1565c0);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+                color: white;
+                text-decoration: none;
+            }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+        }
+
+            .btn-success:hover {
+                background: linear-gradient(135deg, #2e7d32, #1b5e20);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+                color: white;
+                text-decoration: none;
+            }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background: linear-gradient(135deg, #d32f2f, #c62828);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+                color: white;
+                text-decoration: none;
+            }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background: linear-gradient(135deg, #495057, #343a40);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+                color: white;
+                text-decoration: none;
+            }
+
+        .evaluation-actions {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(76, 175, 80, 0.2);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .status-info {
+            margin-top: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-approved {
+            background: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .status-rejected {
+            background: rgba(244, 67, 54, 0.1);
+            color: #c62828;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .rejection-reason {
+            font-weight: normal;
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: #1b5e20;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            min-width: 400px;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .modal-title {
+            color: #c62828;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+                color: #1b5e20;
+            }
+
+            .form-group textarea {
+                width: 100%;
+                height: 100px;
+                padding: 0.75rem;
+                border: 2px solid rgba(76, 175, 80, 0.3);
+                border-radius: 12px;
+                font-family: inherit;
+                font-size: 0.9rem;
+                resize: vertical;
+                transition: border-color 0.3s;
+            }
+
+                .form-group textarea:focus {
+                    outline: none;
+                    border-color: #4caf50;
+                    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+                }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .container
+
+        {
+            padding: 1rem;
+        }
+
+        .header {
+            padding: 1.5rem 1rem;
+        }
+
+        .teslim-card {
+            padding: 1.5rem;
+        }
+
+        .teslim-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .teslim-actions,
+        .evaluation-actions {
+            flex-direction: column;
+        }
+
+        .modal-content {
+            min-width: 90vw;
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+
+        .modal-actions {
+            flex-direction: column;
+        }
+
+        }
+
+        /* Animation keyframes */
+        @@keyframes pageLoad {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .container {
+            animation: pageLoad 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="header">
+        <h1>📋 @ViewBag.GorevAdi - Teslimleri</h1>
+        <a href="@Url.Action("OdevAtama", "Egitmen")" class="back-btn">← Ödev Atama Sayfasına Dön</a>
+    </div>
+
+    <div class="container">
+        @if (Model.Any())
+        {
+            @foreach (var teslim in Model)
+            {
+                <div class="teslim-card">
+                    <div class="teslim-header">
+                        <div class="stajyer-info">
+                            <div class="stajyer-name">👤 @teslim.StajyerGorev.User.AdSoyad</div>
+                            <div class="teslim-date">📅 @teslim.TeslimTarihi.ToString("dd/MM/yyyy HH:mm")</div>
+                        </div>
+                        <span class="status-badge status-@teslim.Durum.ToString().ToLower()">
+                            @(teslim.Durum == StajyerTakipSistemi.Models.TeslimDurumu.Beklemede ? "Değerlendirme Bekliyor" :
+                                                teslim.Durum == StajyerTakipSistemi.Models.TeslimDurumu.Onaylandi ? "Onaylandı" :
+                                                teslim.Durum == StajyerTakipSistemi.Models.TeslimDurumu.Reddedildi ? "Reddedildi" : "Bilinmeyen")
+                </span>
+            </div>
+
+                    <div class="teslim-content">
+                        <p><strong>📄 Dosya:</strong> @teslim.DosyaAdi</p>
+
+                @if (!string.IsNullOrEmpty(teslim.StajyerNotu))
+                        {
+                            <p><strong>📝 Stajyer Notu:</strong> @teslim.StajyerNotu</p>
+                        }
+
+                        @if (teslim.Puan.HasValue)
+                        {
+                            <p><strong>⭐ Puan:</strong> @teslim.Puan/100</p>
+                        }
+
+                        @if (!string.IsNullOrEmpty(teslim.EgitmenGeriBildirimi))
+                        {
+                            <p><strong>💬 Geri Bildirim:</strong> @teslim.EgitmenGeriBildirimi</p>
+                        }
+                    </div>
+
+                    <div class="teslim-actions">
+                        <a href="@teslim.DosyaYolu" target="_blank" class="btn btn-primary">📄 Dosyayı Görüntüle</a>
+                    </div>
+
+                    @if (teslim.Durum == StajyerTakipSistemi.Models.TeslimDurumu.Beklemede || teslim.Durum == StajyerTakipSistemi.Models.TeslimDurumu.RevizeDeneme)
+                    {
+                        <div class="evaluation-actions">
+                            <form method="post" asp-action="OdevOnayla" style="display: inline;">
+                                <input type="hidden" name="teslimId" value="@teslim.Id" />
+                                <button type="submit" class="btn btn-success">✅ Onayla</button>
+                            </form>
+                            <button onclick="openRedModal(@teslim.Id)" class="btn btn-danger">❌ Reddet</button>
+                        </div>
+                    }
+                    else if (teslim.Durum == StajyerTakipSistemi.Models.TeslimDurumu.Onaylandi)
+                    {
+                        <div class="status-info status-approved">
+                            ✅ @teslim.DegerlendirmeTarihi?.ToString("dd/MM/yyyy HH:mm")'de onaylandı
+                        </div>
+                    }
+                    else if (teslim.Durum == StajyerTakipSistemi.Models.TeslimDurumu.Reddedildi)
+                    {
+                        <div class="status-info status-rejected">
+                            ❌ @teslim.DegerlendirmeTarihi?.ToString("dd/MM/yyyy HH:mm")'de reddedildi
+                            <div class="rejection-reason">Neden: @teslim.EgitmenGeriBildirimi</div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <h3>Henüz teslim edilen ödev yok</h3>
+                <p>Bu göreve henüz kimse ödev teslim etmemiş.</p>
+            </div>
+        }
+    </div>
+
+    <!-- Red Modal -->
+    <div id="redModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">❌ Ödev Reddet</h3>
+            </div>
+            <form method="post" asp-action="OdevReddet">
+                <input type="hidden" id="redTeslimId" name="teslimId" />
+                <div class="form-group">
+                    <label>Red Nedeni *</label>
+                    <textarea name="redNedeni" placeholder="Ödevin neden reddedildiğini açıklayın..." required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" onclick="closeRedModal()" class="btn btn-secondary">İptal</button>
+                    <button type="submit" class="btn btn-danger">Reddet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openRedModal(teslimId) {
+            document.getElementById('redTeslimId').value = teslimId;
+            document.getElementById('redModal').style.display = 'block';
+        }
+
+        function closeRedModal() {
+            document.getElementById('redModal').style.display = 'none';
+        }
+
+        // Modal dışına tıklayınca kapat
+        window.onclick = function(event) {
+            const modal = document.getElementById('redModal');
+            if (event.target === modal) {
+                closeRedModal();
+            }
+        }
+
+        // ESC tuşu ile modal kapat
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeRedModal();
+            }
+        });
+
+        console.log('📋 OdevTeslimleri sayfası yüklendi');
+    </script>
+</body>
+</html>

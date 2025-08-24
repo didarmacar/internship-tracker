@@ -1,0 +1,1204 @@
+﻿@using StajyerTakipSistemi.Models.ViewModels
+@model StajyerBasvuruDetayViewModel
+@{
+    ViewData["Title"] = "Başvuru Bilgilerim";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Başvuru Bilgilerim</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8efff 30%, #d8e5ff 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(135, 206, 235, 0.3), rgba(184, 198, 219, 0.1));
+            border-radius: 50%;
+            animation: floatAndFade 8s ease-in-out infinite;
+        }
+
+            .particle:nth-child(1) {
+                width: 100px;
+                height: 100px;
+                left: 15%;
+                top: 20%;
+                animation-delay: 0s;
+            }
+
+            .particle:nth-child(2) {
+                width: 80px;
+                height: 80px;
+                left: 75%;
+                top: 60%;
+                animation-delay: 3s;
+            }
+
+            .particle:nth-child(3) {
+                width: 120px;
+                height: 120px;
+                left: 85%;
+                top: 10%;
+                animation-delay: 6s;
+            }
+
+        @@keyframes floatAndFade {
+            0%% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.8);
+            }
+
+            25%% {
+                opacity: 0.4;
+                transform: translateY(-10px) scale(1);
+            }
+
+            50%% {
+                opacity: 0.6;
+                transform: translateY(-20px) scale(1.1);
+            }
+
+            75%% {
+                opacity: 0.3;
+                transform: translateY(-15px) scale(0.9);
+            }
+
+            100%% {
+                opacity: 0;
+                transform: translateY(10px) scale(0.7);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4682b4 0%, #5a7fb8 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(70, 130, 180, 0.4);
+            position: relative;
+            z-index: 999;
+            height: 70px;
+        }
+
+            .header h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+                color: white;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: white;
+            color: #4682b4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #4682b4;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.9);
+                color: #4682b4;
+                text-decoration: none;
+                transform: translateY(-2px);
+            }
+
+        /* Hamburger Menu */
+        .hamburger-menu {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+        }
+
+            .hamburger-menu:hover {
+                background: rgba(255, 255, 255, 1);
+                transform: scale(1.05);
+            }
+
+        .hamburger-icon {
+            width: 24px;
+            height: 18px;
+            position: relative;
+            transition: 0.3s ease-in-out;
+        }
+
+            .hamburger-icon span {
+                display: block;
+                position: absolute;
+                height: 3px;
+                width: 100%;
+                background: #4682b4;
+                border-radius: 3px;
+                transition: 0.3s ease-in-out;
+            }
+
+                .hamburger-icon span:nth-child(1) {
+                    top: 0px;
+                }
+
+                .hamburger-icon span:nth-child(2) {
+                    top: 7px;
+                }
+
+                .hamburger-icon span:nth-child(3) {
+                    top: 14px;
+                }
+
+        /* Hamburger animasyonu */
+        .hamburger-menu.active .hamburger-icon span:nth-child(1) {
+            top: 7px;
+            transform: rotate(135deg);
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .hamburger-menu.active .hamburger-icon span:nth-child(3) {
+            top: 7px;
+            transform: rotate(-135deg);
+        }
+
+        /* Layout container */
+        .layout-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(70, 130, 180, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 998;
+            overflow-y: auto;
+            padding-top: 5rem;
+        }
+
+            /* Sidebar kapalı*/
+            .sidebar.collapsed {
+                width: 80px;
+            }
+
+                .sidebar.collapsed .menu-text {
+                    display: none;
+                }
+
+                .sidebar.collapsed a {
+                    justify-content: center;
+                    padding: 18px 12px;
+                }
+
+                    .sidebar.collapsed a span:first-child {
+                        margin: 0;
+                        font-size: 1.3rem;
+                    }
+
+            /* Sidebar menü stilleri  */
+            .sidebar ul {
+                list-style: none;
+                padding: 0 1rem;
+                margin: 0;
+            }
+
+            .sidebar li {
+                margin-bottom: 8px;
+            }
+
+            .sidebar a {
+                text-decoration: none;
+                color: #333;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 500;
+                transition: all 0.3s;
+                padding: 16px 18px;
+                border-radius: 12px;
+                white-space: nowrap;
+                position: relative;
+            }
+
+                .sidebar a:hover {
+                    color: #4682b4;
+                    background: rgba(70, 130, 180, 0.1);
+                }
+
+            .sidebar .active {
+                color: #4682b4 !important;
+                font-weight: 600;
+                background: rgba(70, 130, 180, 0.15);
+                border-left: 3px solid #4682b4;
+            }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Content padding  */
+        .content-wrapper {
+            padding: 2rem;
+            margin-left: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .layout-container:not(.sidebar-collapsed) .content-wrapper {
+            margin-left: 0;
+            padding: 2rem 2rem 2rem 1rem;
+        }
+
+        /* Message badge */
+        .message-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+            display: inline-block;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Sidebar overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 997;
+            transition: opacity 0.3s ease;
+        }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(70, 130, 180, 0.2);
+            border-left: 5px solid #4682b4;
+        }
+
+        .page-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            color: #4682b4;
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            line-height: 1.6;
+        }
+
+        .status-banner {
+            background: linear-gradient(135deg, rgba(212, 237, 218, 0.9) 0%, rgba(195, 230, 203, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            border: 2px solid #28a745;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-title {
+            color: #155724;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-date {
+            color: #6c757d;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(70, 130, 180, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+            .form-group label {
+                font-weight: 600;
+                color: #4682b4;
+                font-size: 0.9rem;
+            }
+
+        .form-control {
+            padding: 0.75rem;
+            border: 2px solid rgba(70, 130, 180, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+            .form-control:focus {
+                outline: none;
+                border-color: #4682b4;
+                box-shadow: 0 0 0 3px rgba(70, 130, 180, 0.1);
+                background: rgba(255, 255, 255, 1);
+            }
+
+            .form-control:disabled {
+                background-color: rgba(248, 249, 250, 0.8);
+                color: #6c757d;
+                cursor: not-allowed;
+            }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            font-weight: 600;
+            color: #4682b4;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid rgba(70, 130, 180, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .current-files {
+            background: rgba(70, 130, 180, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(70, 130, 180, 0.1);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+            .file-info a {
+                color: #4682b4;
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+                .file-info a:hover {
+                    text-decoration: underline;
+                }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4682b4, #5a7fb8);
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #3a70a2, #4e6ea6);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(70, 130, 180, 0.4);
+                color: white;
+                text-decoration: none;
+            }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background: #5a6268;
+                text-decoration: none;
+                color: white;
+                transform: translateY(-2px);
+            }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(70, 130, 180, 0.1);
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-success {
+            background: rgba(212, 237, 218, 0.9);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: rgba(248, 215, 218, 0.9);
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .edit-mode-toggle {
+            background: rgba(255, 243, 205, 0.9);
+            border: 2px solid #ffc107;
+            border-radius: 20px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+            .edit-mode-toggle.active {
+                display: block;
+                animation: slideDown 0.3s ease-out;
+            }
+
+        /* Responsive */
+        @@media (max-width: 1024px) {
+            .sidebar {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                height: calc(100vh - 70px);
+                width: 280px;
+                z-index: 998;
+                transform: translateX(-100%%);
+                padding-top: 1rem;
+            }
+
+                .sidebar.active {
+                    transform: translateX(0);
+                }
+
+                .sidebar.collapsed {
+                    width: 280px;
+                }
+
+            .content-wrapper {
+                margin-left: 80px !important;
+                padding: 1rem !important;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+                .header h1 {
+                    font-size: 1.2rem;
+                }
+
+            .user-info span {
+                display: none;
+            }
+
+            .content-wrapper {
+                margin-left: 80px !important;
+                padding: 1rem;
+            }
+
+            .form-actions {
+                justify-content: center;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .hamburger-menu {
+                left: 10px;
+                top: 75px;
+            }
+
+            .content-wrapper {
+                margin-left: 70px !important;
+                padding: 0.8rem;
+            }
+        }
+
+        /* Animation keyframes */
+        @@keyframes pageLoad {
+            0%% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100%% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes slideDown {
+            0%% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            100%% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .layout-container {
+            animation: pageLoad 0.8s ease-out forwards;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="font-size: 1.5rem;">🌱</div>
+            <div>
+                <h1>Stajyer Paneli</h1>
+            </div>
+        </div>
+        <div class="user-info">
+            <div class="user-avatar">@(ViewBag.UserName?.Split(' ')[0]?.Substring(0, 1) ?? "S")@(ViewBag.UserName?.Split(' ').Length > 1 ? ViewBag.UserName.Split(' ')[1].Substring(0, 1) : "T")</div>
+            <span>@(ViewBag.UserName ?? "Kullanıcı") - Stajyer</span>
+            <a href="@Url.Action("Logout", "Auth")" class="logout-btn">Çıkış Yap</a>
+        </div>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" onclick="toggleSidebar()">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <div class="layout-container" id="layoutContainer">
+        <aside class="sidebar" id="sidebar">
+            <ul>
+                @{
+                    var basvuruOnaylandi = Model.BasvuruDurumu == "Onaylandi";
+                }
+
+                <li><a href="@Url.Action("Index", "Stajyer")"><span>🏡</span> <span class="menu-text">Ana Sayfa</span></a></li>
+
+                <li>
+                    @if (basvuruOnaylandi)
+                    {
+                        <a href="@Url.Action("Odevlerim", "Stajyer")"><span>✨</span> <span class="menu-text">Ödevlerim</span></a>
+                    }
+                    else
+                    {
+                        <a href="#" class="disabled"><span>✨</span> <span class="menu-text">Ödevlerim</span></a>
+                    }
+                </li>
+
+                <li>
+                    @if (basvuruOnaylandi)
+                    {
+                        <a href="@Url.Action("Egitimler", "Stajyer")"><span>📆</span> <span class="menu-text">Eğitimler</span></a>
+                    }
+                    else
+                    {
+                        <a href="#" class="disabled"><span>📆</span> <span class="menu-text">Eğitimler</span></a>
+                    }
+                </li>
+
+                <li>
+                    @if (basvuruOnaylandi)
+                    {
+                        <a href="@Url.Action("Mesajlar", "Stajyer")">
+                            <span>📭</span> <span class="menu-text">Duyurular</span>
+                            @{
+                                var bildirimSayisi = ViewBag.OkunmamisBildirimSayisi ?? 0;
+                            }
+                            @if (bildirimSayisi > 0)
+                            {
+                                <span class="message-badge">@bildirimSayisi</span>
+                            }
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="#" class="disabled">
+                            <span>📭</span> <span class="menu-text">Duyurular</span>
+                            @{
+                                var bildirimSayisi = ViewBag.OkunmamisBildirimSayisi ?? 0;
+                            }
+                            @if (bildirimSayisi > 0)
+                            {
+                                <span class="message-badge">@bildirimSayisi</span>
+                            }
+                        </a>
+                    }
+                </li>
+
+                <li><a href="@Url.Action("Basvuru", "Stajyer")" class="active"><span>📝</span> <span class="menu-text">Başvuru Bilgilerim</span></a></li>
+                <li><a href="#" id="kahveKutusuLink"><span>☕</span> <span class="menu-text">Kahve Kutusu</span></a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h2 class="page-title">📝 Başvuru Bilgilerim</h2>
+                    <p class="page-subtitle">Başvuru bilgilerini görüntüle ve güncelle</p>
+                </div>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">
+                        <strong>✅ Başarılı!</strong> @TempData["Success"]
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger">
+                        <strong>❌ Hata!</strong> @TempData["Error"]
+                    </div>
+                }
+
+                <!-- Başvuru Durumu Banner -->
+                <div class="status-banner">
+                    <div class="status-icon">✅</div>
+                    <div class="status-title">Başvurunuz Onaylandı!</div>
+                    <div class="status-date">Başvuru Tarihi: @Model.BasvuruTarihi.ToString("dd/MM/yyyy")</div>
+                </div>
+
+                <!-- Düzenleme Modu Uyarısı -->
+                <div id="editModeAlert" class="edit-mode-toggle">
+                    <strong>✏️ Düzenleme Modu:</strong> Bilgilerinizi değiştirdikten sonra "Kaydet" butonuna basınız.
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        <strong>❌ Hata!</strong> Lütfen aşağıdaki hataları düzeltin:
+                        <ul style="margin: 0.5rem 0 0 0; padding-left: 20px;">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form asp-action="BasvuruGuncelle" method="post" enctype="multipart/form-data" id="basvuruForm">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="BasvuruTarihi" />
+                    <input type="hidden" asp-for="BasvuruDurumu" />
+
+                    <div class="form-container">
+                        <!-- Kişisel Bilgiler -->
+                        <div class="form-section">
+                            <h3 class="section-title">👤 Kişisel Bilgiler</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label asp-for="AdSoyad">Ad Soyad *</label>
+                                    <input asp-for="AdSoyad" class="form-control" disabled id="adSoyad" />
+                                </div>
+                                <div class="form-group">
+                                    <label>E-mail Adresi</label>
+                                    <input value="@Model.Email" class="form-control" disabled readonly />
+                                    <small style="color: #666; font-size: 0.8rem;">🔒 Güvenlik nedeniyle e-mail değiştirilemez</small>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Telefon">Telefon *</label>
+                                    <input asp-for="Telefon" class="form-control" disabled id="telefon" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Şifre Güncelleme -->
+                        <div class="form-section">
+                            <h3 class="section-title">🔐 Şifre Güncelleme</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label asp-for="MevcutSifre">Mevcut Şifre</label>
+                                    <input asp-for="MevcutSifre" type="password" class="form-control" disabled id="mevcutSifre" placeholder="Şifre değiştirmek için doldurun" />
+                                    <span asp-validation-for="MevcutSifre" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="YeniSifre">Yeni Şifre</label>
+                                    <input asp-for="YeniSifre" type="password" class="form-control" disabled id="yeniSifre" placeholder="En az 6 karakter" />
+                                    <span asp-validation-for="YeniSifre" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="YeniSifreTekrar">Yeni Şifre Tekrar</label>
+                                    <input asp-for="YeniSifreTekrar" type="password" class="form-control" disabled id="yeniSifreTekrar" placeholder="Yeni şifreyi tekrar girin" />
+                                    <span asp-validation-for="YeniSifreTekrar" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <small style="color: #666; font-size: 0.8rem;">💡 Şifre değiştirmek istemiyor musunuz? Bu alanları boş bırakın.</small>
+                        </div>
+
+                        <!-- Okul Bilgileri -->
+                        <div class="form-section">
+                            <h3 class="section-title">🎓 Okul Bilgileri</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label asp-for="OkulAdi">Okul Adı *</label>
+                                    <input asp-for="OkulAdi" class="form-control" disabled id="okulAdi" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Bolum">Bölüm *</label>
+                                    <input asp-for="Bolum" class="form-control" disabled id="bolum" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Sinif">Sınıf *</label>
+                                    <select asp-for="Sinif" class="form-control" disabled id="sinif">
+                                        <option value="">Seçiniz</option>
+                                        <option value="1">1. Sınıf</option>
+                                        <option value="2">2. Sınıf</option>
+                                        <option value="3">3. Sınıf</option>
+                                        <option value="4">4. Sınıf</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="StajTuru">Staj Türü *</label>
+                                    <select asp-for="StajTuru" class="form-control" disabled id="stajTuru">
+                                        <option value="">Seçiniz</option>
+                                        <option value="Zorunlu Staj">Zorunlu Staj</option>
+                                        <option value="Gönüllü Staj">Gönüllü Staj</option>
+                                        <option value="Yaz Stajı">Yaz Stajı</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Staj Bilgileri -->
+                        <div class="form-section">
+                            <h3 class="section-title">📅 Staj Bilgileri</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label asp-for="StajBaslangicTarihi">Başlangıç Tarihi *</label>
+                                    <input asp-for="StajBaslangicTarihi" type="date" class="form-control" disabled id="baslangicTarihi" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="StajBitisTarihi">Bitiş Tarihi *</label>
+                                    <input asp-for="StajBitisTarihi" type="date" class="form-control" disabled id="bitisTarihi" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Belgeler -->
+                        <div class="form-section">
+                            <h3 class="section-title">📄 Belgeler</h3>
+
+                            <!-- CV -->
+                            <div class="form-group">
+                                <label>Mevcut CV Dosyası</label>
+                                @if (!string.IsNullOrEmpty(Model.CVDosyaYolu))
+                                {
+                                    <div class="current-files">
+                                        <div class="file-info">
+                                            📄 <a href="@Model.CVDosyaYolu" target="_blank">CV'yi Görüntüle</a>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="current-files">
+                                        <div class="file-info">❌ CV dosyası yüklenmemiş</div>
+                                    </div>
+                                }
+                                <label asp-for="YeniCVDosyasi">Yeni CV Dosyası (İsteğe bağlı)</label>
+                                <input asp-for="YeniCVDosyasi" type="file" class="form-control" accept=".pdf,.doc,.docx" disabled id="yeniCV" />
+                            </div>
+
+                            <!-- Fotoğraf -->
+                            <div class="form-group">
+                                <label>Mevcut Fotoğraf</label>
+                                @if (!string.IsNullOrEmpty(Model.FotografDosyaYolu))
+                                {
+                                    <div class="current-files">
+                                        <div class="file-info">
+                                            🖼️ <a href="@Model.FotografDosyaYolu" target="_blank">Fotoğrafı Görüntüle</a>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="current-files">
+                                        <div class="file-info">❌ Fotoğraf yüklenmemiş</div>
+                                    </div>
+                                }
+                                <label asp-for="YeniFotografDosyasi">Yeni Fotoğraf (İsteğe bağlı)</label>
+                                <input asp-for="YeniFotografDosyasi" type="file" class="form-control" disabled id="yeniFoto" />
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="editBtn">✏️ Düzenle</button>
+                            <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">↩️ İptal</button>
+                            <button type="submit" class="btn btn-primary" id="saveBtn" style="display: none;">💾 Değişiklikleri Kaydet</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let sidebarState = 'expanded';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSidebarClasses();
+
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 1024) {
+                    if (sidebarState !== 'collapsed') {
+                        sidebarState = 'collapsed';
+                        updateSidebarClasses();
+                    }
+                }
+            });
+
+            // Form functionality
+            const editBtn = document.getElementById('editBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const editModeAlert = document.getElementById('editModeAlert');
+            const form = document.getElementById('basvuruForm');
+
+            // Düzenlenebilir alanların ID'leri
+            const editableFields = [
+                'adSoyad', 'telefon', 'okulAdi', 'bolum',
+                'sinif', 'stajTuru', 'baslangicTarihi', 'bitisTarihi',
+                'yeniCV', 'yeniFoto', 'mevcutSifre', 'yeniSifre', 'yeniSifreTekrar'
+            ];
+
+            // Orijinal değerleri sakla
+            let originalValues = {};
+
+            // Düzenle butonuna tıklandığında
+            editBtn.addEventListener('click', function() {
+                // Orijinal değerleri sakla
+                editableFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        originalValues[fieldId] = field.value;
+                    }
+                });
+
+                // Alanları etkinleştir
+                editableFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        field.disabled = false;
+                    }
+                });
+
+                // Buton görünümlerini değiştir
+                editBtn.style.display = 'none';
+                cancelBtn.style.display = 'inline-flex';
+                saveBtn.style.display = 'inline-flex';
+                editModeAlert.classList.add('active');
+            });
+
+            // İptal butonuna tıklandığında
+            cancelBtn.addEventListener('click', function() {
+                // Orijinal değerleri geri yükle
+                editableFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field && originalValues[fieldId] !== undefined) {
+                        field.value = originalValues[fieldId];
+                    }
+                });
+
+                // Alanları devre dışı bırak
+                editableFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        field.disabled = true;
+                    }
+                });
+
+                // Buton görünümlerini geri değiştir
+                editBtn.style.display = 'inline-flex';
+                cancelBtn.style.display = 'none';
+                saveBtn.style.display = 'none';
+                editModeAlert.classList.remove('active');
+            });
+
+            // Form submit öncesi kontrol
+            form.addEventListener('submit', function(e) {
+                // Tarih validasyonu
+                const baslangic = document.getElementById('baslangicTarihi');
+                const bitis = document.getElementById('bitisTarihi');
+
+                if (baslangic.value && bitis.value) {
+                    if (new Date(baslangic.value) >= new Date(bitis.value)) {
+                        e.preventDefault();
+                        alert('Staj bitiş tarihi başlangıç tarihinden sonra olmalıdır!');
+                        return;
+                    }
+                }
+
+                // Şifre validasyonu
+                const yeniSifre = document.getElementById('yeniSifre');
+                const yeniSifreTekrar = document.getElementById('yeniSifreTekrar');
+                const mevcutSifre = document.getElementById('mevcutSifre');
+
+                if (yeniSifre.value) {
+                    if (!mevcutSifre.value) {
+                        e.preventDefault();
+                        alert('Yeni şifre belirlemek için mevcut şifrenizi girmelisiniz!');
+                        mevcutSifre.focus();
+                        return;
+                    }
+
+                    if (yeniSifre.value.length < 6) {
+                        e.preventDefault();
+                        alert('Yeni şifre en az 6 karakter olmalıdır!');
+                        yeniSifre.focus();
+                        return;
+                    }
+
+                    if (yeniSifre.value !== yeniSifreTekrar.value) {
+                        e.preventDefault();
+                        alert('Yeni şifreler eşleşmiyor!');
+                        yeniSifreTekrar.focus();
+                        return;
+                    }
+                }
+
+                // Submit butonunu devre dışı bırak
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '⏳ Kaydediliyor...';
+            });
+        });
+
+        function toggleSidebar() {
+            const isDesktop = window.innerWidth > 1024;
+
+            if (isDesktop) {
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            } else {
+                sidebarState = sidebarState === 'collapsed' ? 'expanded' : 'collapsed';
+            }
+
+            updateSidebarClasses();
+        }
+
+        function closeSidebar() {
+            if (window.innerWidth <= 1024) {
+                sidebarState = 'collapsed';
+                updateSidebarClasses();
+            }
+        }
+
+        function updateSidebarClasses() {
+            const sidebar = document.getElementById('sidebar');
+            const layoutContainer = document.getElementById('layoutContainer');
+            const hamburger = document.querySelector('.hamburger-menu');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            sidebar.classList.remove('active', 'collapsed');
+            layoutContainer.classList.remove('sidebar-collapsed');
+            hamburger.classList.remove('active');
+            overlay.classList.remove('active');
+
+            if (window.innerWidth <= 1024) {
+                if (sidebarState === 'expanded') {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    hamburger.classList.add('active');
+                } else {
+                    sidebar.classList.add('collapsed');
+                }
+            } else {
+                if (sidebarState === 'collapsed') {
+                    sidebar.classList.add('collapsed');
+                    layoutContainer.classList.add('sidebar-collapsed');
+                } else {
+                    hamburger.classList.add('active');
+                }
+            }
+        }
+
+        // Kahve kutusu
+        document.getElementById('kahveKutusuLink')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('☕ Kahve kutusu özelliği yakında eklenecek!');
+        });
+
+        // Sidebar animation
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                if (!document.querySelector('.sidebar').classList.contains('collapsed')) {
+                    this.style.transform = 'translateX(8px)';
+                }
+            });
+
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Handle clicks outside sidebar on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 1024 && sidebarState === 'expanded') {
+                const sidebar = document.getElementById('sidebar');
+                const hamburger = document.querySelector('.hamburger-menu');
+
+                if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+
+        document.getElementById('sidebar').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+
+        console.log('📝 Başvuru detay sayfası yüklendi');
+    </script>
+</body>
+</html>

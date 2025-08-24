@@ -1,0 +1,544 @@
+﻿@model StajyerTakipSistemi.Models.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Giriş";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stajyer Takip Sistemi - Giriş</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8fffe 0%, #f0f4f0 30%, #e8f0e8 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(46, 125, 50, 0.3), rgba(27, 94, 32, 0.1));
+            border-radius: 50%;
+            animation: floatAndFade 8s ease-in-out infinite;
+        }
+
+            .particle:nth-child(1) {
+                width: 100px;
+                height: 100px;
+                left: 15%;
+                top: 20%;
+                animation-delay: 0s;
+            }
+
+            .particle:nth-child(2) {
+                width: 80px;
+                height: 80px;
+                left: 75%;
+                top: 60%;
+                animation-delay: 3s;
+            }
+
+            .particle:nth-child(3) {
+                width: 120px;
+                height: 120px;
+                left: 85%;
+                top: 10%;
+                animation-delay: 6s;
+            }
+
+            .particle:nth-child(4) {
+                width: 90px;
+                height: 90px;
+                left: 5%;
+                top: 70%;
+                animation-delay: 2s;
+            }
+
+            .particle:nth-child(5) {
+                width: 70px;
+                height: 70px;
+                left: 45%;
+                top: 15%;
+                animation-delay: 4s;
+            }
+
+        @@keyframes floatAndFade {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+        }
+
+        25% {
+            opacity: 0.4;
+            transform: translateY(-10px) scale(1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: translateY(-20px) scale(1.1);
+        }
+
+        75% {
+            opacity: 0.3;
+            transform: translateY(-15px) scale(0.9);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateY(10px) scale(0.7);
+        }
+
+        }
+
+        .main-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sol taraf - Giriş formu */
+        .login-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 15px 35px rgba(76, 175, 80, 0.15);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            position: relative;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+            .login-card:hover,{
+                transform: translateY(-3px);
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1); /* Sadece gri shadow */
+                background: rgba(255, 255, 255, 0.95);
+            }
+
+            .login-card:hover::before {
+                opacity: 0.8;
+            }
+
+            .login-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 25px 50px rgba(102, 126, 234, 0.2);
+                background: rgba(255, 255, 255, 0.95);
+            }
+
+        @@keyframes gradientShift {
+            0%, 100%
+
+        {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        }
+
+        .login-title {
+            text-align: center;
+            color: #1b5e20;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .user-type-selection {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .user-type-option {
+            flex: 1;
+            position: relative;
+        }
+
+            .user-type-option input[type="radio"] {
+                position: absolute;
+                opacity: 0;
+            }
+
+            .user-type-option label {
+                display: block;
+                padding: 15px 10px;
+                border: 2px solid #e0e0e0;
+                border-radius: 12px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                background: #f8f9fa;
+                font-weight: 500;
+                color: #666;
+            }
+
+            .user-type-option input[type="radio"]:checked + label {
+                border-color: #4caf50;
+                background: #f8f9fa; 
+                color: #2e7d32;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+            }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                color: #333;
+                font-weight: 600;
+                font-size: 14px;
+            }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+            background: #fafafa;
+        }
+
+            .form-control:focus {
+                border-color: #4caf50;
+                background: white;
+                box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+            }
+
+        .btn-login {
+            width: 100%;
+            padding: 18px;
+            background: #1b5e20;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn-login::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                transition: left 0.5s;
+            }
+
+            .btn-login:hover::before {
+                left: 100%;
+            }
+
+            .btn-login:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(76, 175, 80, 0.3);
+            }
+
+        .register-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+            .register-link a {
+                color: #4caf50;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+                .register-link a:hover {
+                    color: #2e7d32;
+                    text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+                }
+
+        /* Sağ taraf - Brand alanı */
+        .brand-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .brand-title {
+            color: #1b5e20;
+            font-size: 63px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(27, 94, 32, 0.1);
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+
+        .brand-slogan {
+            color: #2e7d32;
+            font-size: 33px;
+            font-weight: 500;
+            margin-bottom: 50px;
+            opacity: 0.9;
+        }
+               
+                    
+                       
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            color: #c62828;
+            border: 1px solid #ef5350;
+        }
+
+        @@keyframes slideIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        /* Responsive */
+        @@media (max-width: 1024px) {
+            .main-container
+
+        {
+            flex-direction: column;
+        }
+
+        .brand-section {
+            order: -1;
+            flex: none;
+            min-height: 40vh;
+        }
+
+        .brand-title {
+            font-size: 64px;
+        }
+
+        .brand-slogan {
+            font-size: 32px;
+        }
+
+        .feature-list {
+            display: none;
+        }
+
+        }
+
+        @@media (max-width: 768px) {
+            .login-section
+
+        {
+            padding: 20px;
+        }
+
+        .login-card {
+            padding: 30px 25px;
+        }
+
+        .brand-title {
+            font-size: 48px;
+        }
+
+        .brand-slogan {
+            font-size: 24px;
+        }
+
+        }
+
+        /* Animasyon stilleri */
+        @@keyframes cardShrinkToRegister {
+            0%
+
+        {
+            transform: scale(1) translateX(0);
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+
+        100% {
+            transform: scale(0.4) translateX(150%);
+            opacity: 0;
+        }
+
+        }
+
+        @@keyframes fadeOut {
+            0%
+
+        {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="main-container">
+        <!-- Sol taraf - Giriş formu -->
+        <div class="login-section">
+            <div class="login-card">
+                <h2 class="login-title">Hoş Geldiniz</h2>
+                <p class="login-subtitle">Hesabınıza giriş yapın</p>
+
+                @if (ViewData.ModelState.ErrorCount > 0)
+                {
+                    <div class="alert alert-danger">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <div>@error.ErrorMessage</div>
+                        }
+                    </div>
+                }
+
+                <form asp-action="Login" method="post">
+                    <div class="user-type-selection">
+                        <div class="user-type-option">
+                            <input asp-for="UserType" type="radio" value="0" id="egitmen" />
+                            <label for="egitmen"> 🌳 Eğitmen</label>
+                        </div>
+                        <div class="user-type-option">
+                            <input asp-for="UserType" type="radio" value="1" id="stajyer" />
+                            <label for="stajyer">🌱 Stajyer</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Email">E-posta Adresi</label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="ornek@email.com" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Sifre">Şifre</label>
+                        <input asp-for="Sifre" type="password" class="form-control" placeholder="Şifrenizi giriniz" />
+                        <span asp-validation-for="Sifre" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn-login">GİRİŞ YAP</button>
+                </form>
+
+                <div class="register-link">
+                    <a onclick="goToRegister()">Hesabınız yok mu? Kayıt olun</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ taraf - Brand alanı -->
+        <div class="brand-section">
+            <h1 class="brand-title">Stajyer Takip Sistemi</h1>
+            <p class="brand-slogan">Stajınızı Profesyonelce Yönetin</p>
+                        
+        </div>
+    </div>
+
+    <script>
+        // Form submit animasyonu
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const btn = document.querySelector('.btn-login');
+            btn.style.transform = 'scale(0.95)';
+            btn.innerHTML = 'Giriş yapılıyor...';
+
+            setTimeout(() => {
+                btn.style.transform = 'scale(1)';
+            }, 200);
+        });
+
+        // Kayıt sayfasına geçiş fonksiyonu
+        
+        function goToRegister() {
+            // Direkt kayıt sayfasına git
+            window.location.href = '@Url.Action("Register", "Auth")';
+        }
+    </script>
+</body>
+</html>
